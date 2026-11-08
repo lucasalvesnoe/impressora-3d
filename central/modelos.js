@@ -54,11 +54,11 @@ async function abre(m) {
   viewer.ajusta();
   $("mvBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
   try {
-    const buf = await (await fetch("/api/modelo/stl?id=" + m.id)).arrayBuffer();
+    const buf = await (await fetch(m.stl || ("/api/modelo/stl?id=" + m.id))).arrayBuffer();
     if (!buf.byteLength) throw new Error("vazio");
     const d = viewer.mostra(new STLLoader().parse(buf));
     const cabe = d.x <= MESA && d.y <= MESA && d.z <= 250;
-    $("mvInfo").innerHTML = `${d.x.toFixed(1)} × ${d.y.toFixed(1)} × ${d.z.toFixed(1)} mm · ${cabe ? "cabe na Ender-3" : "<b style='color:#ef5a5a'>não cabe na mesa</b>"} · ${esc(m.arquivo)} (${m.pasta})`;
+    $("mvInfo").innerHTML = `${d.x.toFixed(1)} × ${d.y.toFixed(1)} × ${d.z.toFixed(1)} mm · ${cabe ? "cabe na Ender-3" : "<b style='color:#ef5a5a'>não cabe na mesa</b>"} · ${m.conceito ? "conceito: a versão final sai com as medidas reais" : esc(m.arquivo) + " (" + m.pasta + ")"}`;
   } catch {
     $("mvInfo").textContent = "não consegui abrir este arquivo em 3D";
   }
@@ -93,10 +93,14 @@ export async function carregaIdeias() {
     return `<section class="igrupo"><h2>Planejado: ${esc(g)}</h2><p class="sub">${nl} prontos para baixar · ${nc} para modelarmos</p><div class="ilista">
       ${g.includes("Celina") ? `<div class="ideia regra"><span class="tag aviso">segurança</span><b>${esc(regra)}</b></div>` : ""}
       ${itens.map(i => i.tipo === "link"
-        ? `<a class="ideia" href="${esc(i.url)}" target="_blank" rel="noopener"><span class="tag baixar">baixar</span><b>${esc(i.nome)}</b>${i.nota ? `<span>${esc(i.nota)}</span>` : ""}<span>${esc(new URL(i.url).hostname.replace("www.", ""))}</span></a>`
+        ? `<a class="ideia" href="${esc(i.url)}" target="_blank" rel="noopener">${i.capa ? `<img class="icapa" loading="lazy" src="/api/capa?n=${esc(i.capa)}" alt="">` : ""}<span class="tag baixar">baixar ↗</span><b>${esc(i.nome)}</b>${i.nota ? `<span>${esc(i.nota)}</span>` : ""}<span>${esc(new URL(i.url).hostname.replace("www.", ""))}</span></a>`
         : i.tipo === "criar"
-        ? `<div class="ideia"><span class="tag criar">vamos criar</span><b>${esc(i.nome)}</b></div>`
+        ? `<button class="ideia criar" data-c="${esc(i.conceito || "")}" data-n="${esc(i.nome)}">${i.conceito ? `<img class="icapa" loading="lazy" src="/api/criar/img?n=${esc(i.conceito)}" alt="">` : ""}<span class="tag criar">vamos criar · toque para girar em 3D</span><b>${esc(i.nome)}</b></button>`
         : `<div class="ideia"><span class="tag aviso">atenção</span><b>${esc(i.nome)}</b></div>`).join("")}
     </div></section>`;
   }).join("");
+  document.querySelectorAll(".ideia.criar").forEach(b => b.onclick = () => {
+    if (!b.dataset.c) return;
+    abre({ nome: b.dataset.n, stl: "/api/criar/stl?n=" + b.dataset.c, conceito: true });
+  });
 }

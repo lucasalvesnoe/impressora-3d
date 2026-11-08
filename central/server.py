@@ -238,6 +238,16 @@ class H(BaseHTTPRequestHandler):
                 leve = caminho(f"web_{rota[5:]}.jpg")   # versão reduzida gerada pelo painel.py
                 arq = leve if os.path.exists(leve) and os.path.getmtime(leve) > time.time() - 10 else caminho(IMAGENS[rota[5:]])
                 return self.envia(open(arq, "rb").read(), "image/jpeg")
+            if rota == "/render.html":
+                return self.envia(open(caminho("central/render.html"), "rb").read(), "text/html; charset=utf-8")
+            if rota in ("/api/criar/stl", "/api/criar/img", "/api/capa"):
+                from urllib.parse import parse_qs, urlparse
+                n = os.path.basename(parse_qs(urlparse(self.path).query).get("n", [""])[0])
+                arq = {"/api/criar/stl": f"criar/stl/{n}.stl", "/api/criar/img": f"criar/img/{n}.png", "/api/capa": f"central/capas/{n}"}[rota]
+                if n and os.path.exists(caminho(arq)):
+                    tipo = "model/stl" if arq.endswith(".stl") else "image/png" if arq.endswith(".png") else "image/jpeg"
+                    return self.envia(open(caminho(arq), "rb").read(), tipo)
+                return self.envia(b"", "text/plain", 404)
             if rota == "/api/ideias":
                 return self.envia(open(caminho("central/ideias.json"), "rb").read(), "application/json")
             if rota in ("/api/modelos", "/api/modelo/mini", "/api/modelo/stl"):

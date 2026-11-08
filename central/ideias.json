@@ -4,214 +4,246 @@
   "tipo": "link",
   "nome": "Flipper Zero Case (Kermit)",
   "url": "https://www.printables.com/model/256570-flipper-zero-case",
-  "nota": "CC BY-NC, sem suporte, parafusos M3x20."
+  "nota": "CC BY-NC, sem suporte, parafusos M3x20.",
+  "capa": "1befe3ccd1fd.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Flipper Zero Desktop Stand (Jake Anderson)",
   "url": "https://www.printables.com/model/363539-flipper-zero-desktop-stand",
-  "nota": "CC0."
+  "nota": "CC0.",
+  "capa": "f8932d242e3c.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Flipper WiFi Dev Board Case, Marauder Skull",
   "url": "https://www.printables.com/model/921184-flipper-zero-wifi-dev-board-case-marauder-skull-lo",
-  "nota": "sem suporte, tampa com troca de cor."
+  "nota": "sem suporte, tampa com troca de cor.",
+  "capa": "5e0d66552a4a.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Case ESP32 2432S028 USB-C",
   "url": "https://www.printables.com/model/793451-case-esp32-2432s028-usb-c-module-cheap-yellow-disp",
-  "nota": "é da 028; a nossa é 2432S024, medir antes."
+  "nota": "é da 028; a nossa é 2432S024, medir antes.",
+  "capa": "f93aa9dcde7a.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Enclosure Sunton ESP32-2432S028R",
   "url": "https://www.printables.com/model/685845-enclosure-for-sunton-esp32-2432s028r-cheap-yellow-",
-  "nota": "idem."
+  "nota": "idem.",
+  "capa": "fea89af81cb8.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "RTL SDR Antenna Wall Mount",
   "url": "https://www.printables.com/model/1607270-rtl-sdr-antenna-wall-mount-no-screws-in-wall",
-  "nota": "precisa de suporte."
+  "nota": "precisa de suporte.",
+  "capa": "43fb5fab688c.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "RTL-SDR Kit Antenna Stand",
   "url": "https://www.printables.com/model/1783876-rtl-sdr-kit-antenna-stand",
-  "nota": "GPL v3, sem suporte."
+  "nota": "GPL v3, sem suporte.",
+  "capa": "2be5f81a4016.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Desk Cable Clip",
   "url": "https://www.printables.com/model/215136-desk-cable-clip",
-  "nota": "tampo 40 mm, minutos."
+  "nota": "tampo 40 mm, minutos.",
+  "capa": "1abb82de5a58.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Under-Desk Cable Holder",
   "url": "https://www.printables.com/model/309082-under-desk-cable-holder",
-  "nota": "sem suporte."
+  "nota": "sem suporte.",
+  "capa": "6599c400fa83.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Under Desk Cable Tray paramétrico",
   "url": "https://www.printables.com/model/906840-parameterised-under-desk-cable-management-tray",
-  "nota": "precisa de suporte."
+  "nota": "precisa de suporte.",
+  "capa": "58ce6fb496fd.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Desk clamp cable holder modular",
   "url": "https://makerworld.com/en/models/1066436-desk-clamp-cable-holder-modular",
-  "nota": "mesa até 45 mm."
+  "nota": "mesa até 45 mm.",
+  "capa": "dbd5b7487f7b.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Keycap Holder Stand",
   "url": "https://www.printables.com/model/637042-keyboard-keycap-holder-stand-remix",
-  "nota": "sem suporte."
+  "nota": "sem suporte.",
+  "capa": "6766770be3c8.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Ergonomic mouse wrist rest",
   "url": "https://www.printables.com/model/795782-ergonomic-mouse-wrist-rest",
-  "nota": "precisa de suporte."
+  "nota": "precisa de suporte.",
+  "capa": "499389040d6f.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "AirTag strong keyring",
   "url": "https://www.printables.com/model/65525-airtag-strong-keyring-keychain-holder",
-  "nota": "CC BY-NC, sem suporte."
+  "nota": "CC BY-NC, sem suporte.",
+  "capa": "3040f7b7fb01.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "MagSafe iPhone + Watch Stand",
   "url": "https://www.printables.com/model/605788-magsafe-iphone-and-apple-watch-stand",
-  "nota": "precisa de carregador MagSafe."
+  "nota": "precisa de carregador MagSafe.",
+  "capa": "507c34720b40.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Ender 3 Camera Mount (peça única)",
   "url": "https://www.printables.com/model/1248119-ender-3-camera-mount-one-piece-print",
-  "nota": "1 h, rosca 1/4\"."
+  "nota": "1 h, rosca 1/4\".",
+  "capa": "81d8497177ae.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Ender-3 V2 phone mount eixo X",
   "url": "https://www.printables.com/model/1289900-creality-ender-3-v2-phone-mount-holder-for-x-axis",
-  "nota": "feito para V2, conferir."
+  "nota": "feito para V2, conferir.",
+  "capa": "6dbd5a1a81c6.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "link",
   "nome": "Ender-3 V3 SE Tool Holder",
   "url": "https://www.printables.com/model/668131-ender-3-v3-se-tool-holder",
-  "nota": "para V3 SE, só inspiração."
+  "nota": "para V3 SE, só inspiração.",
+  "capa": "cb05b248dae2.jpg"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Caixa da CYD 2432S024 com suporte inclinado (fácil)",
-  "nota": ""
+  "nota": "",
+  "conceito": "cyd"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Estação de carga em fila para os iPhones com canais de cabo (médio)",
-  "nota": ""
+  "nota": "",
+  "conceito": "carga"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Garra de iPhone no carro do eixo X para câmera da impressora (médio)",
-  "nota": ""
+  "nota": "",
+  "conceito": "garra"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Painel de antenas, SDR, LoRa e Flipper (médio)",
-  "nota": ""
+  "nota": "",
+  "conceito": "antenas"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Caixa-livro de Rubber Ducky e pendrives numerados (fácil)",
-  "nota": ""
+  "nota": "",
+  "conceito": "livro"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Gaveteiro de cabos USB por tipo (fácil)",
-  "nota": ""
+  "nota": "",
+  "conceito": "gaveteiro"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Base de AirPods + AirTags (fácil)",
-  "nota": ""
+  "nota": "",
+  "conceito": "airpods"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Elevação do teclado com compartimento (médio; full-size divide em duas partes)",
-  "nota": ""
+  "nota": "",
+  "conceito": "teclado"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Porta-ferramentas da Ender-3 nos parafusos da estrutura (médio)",
-  "nota": ""
+  "nota": "",
+  "conceito": "ferramentas"
  },
  {
   "grupo": "Home office",
   "tipo": "criar",
   "nome": "Dock vertical para MacBook Pro e Air (fácil)",
-  "nota": ""
+  "nota": "",
+  "conceito": "dock"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Rainbow Ring Stacker (Celina)",
   "url": "https://www.printables.com/model/1880654-stacking-ring-toy-rainbow-ring-stacker-for-babies",
-  "nota": "2h48, sem suporte; argola menor 34 mm, medir o tampo."
+  "nota": "2h48, sem suporte; argola menor 34 mm, medir o tampo.",
+  "capa": "4932845a7a64.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Ring Stacking Toy grande (Celina)",
   "url": "https://www.printables.com/model/1559194-ring-stacking-toy",
-  "nota": "20 h a 0,16 mm."
+  "nota": "20 h a 0,16 mm.",
+  "capa": "0f5883d48afe.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Baby Ring Stacking Toy",
   "url": "https://www.printables.com/model/731460-baby-ring-stacking-toy",
-  "nota": "usa suporte, medir."
+  "nota": "usa suporte, medir.",
+  "capa": "06489f12187e.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Shapes Stack and Sort",
   "url": "https://makerworld.com/en/models/1838923-shapes-stack-sort-toddler-toy",
-  "nota": "4,3 h, 18 meses ou mais."
+  "nota": "4,3 h, 18 meses ou mais.",
+  "capa": "c16d698bea62.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
@@ -223,129 +255,149 @@
   "tipo": "link",
   "nome": "Screw Station (Antonella)",
   "url": "https://makerworld.com/en/models/197020-screw-station-kids-toy",
-  "nota": "peças pequenas."
+  "nota": "peças pequenas.",
+  "capa": "c05f6d27f8b5.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Cute Farm Play Set (Antonella)",
   "url": "https://makerworld.com/en/models/180101-cute-farm-play-set-for-children",
-  "nota": "4,5 h."
+  "nota": "4,5 h.",
+  "capa": "524ec5b05243.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Pop Up Toy (Antonella)",
   "url": "https://makerworld.com/en/models/686267-pop-up-toy",
-  "nota": "11,7 h, molas pequenas."
+  "nota": "11,7 h, molas pequenas.",
+  "capa": "993faba6c950.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Geometric Shape Sorter cubo",
   "url": "https://www.printables.com/model/1313742-geometric-shape-sorter-toy-for-kids-educational-3d",
-  "nota": ""
+  "nota": "",
+  "capa": "09703b701b57.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Balancing and Stacking Game V2 (família)",
   "url": "https://www.thingiverse.com/thing:7300856",
-  "nota": "sem suporte."
+  "nota": "sem suporte.",
+  "capa": "bfd37aac243e.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Bowling Game (família)",
   "url": "https://www.crealitycloud.com/model-detail/bowling-game",
-  "nota": "6h53 a 8h43."
+  "nota": "6h53 a 8h43.",
+  "capa": "b8943eb99a34.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Shut The Box (Antonella + adulto)",
   "url": "https://www.thingiverse.com/thing:4792738",
-  "nota": "197 x 197 mm, precisa de varetas e arruelas."
+  "nota": "197 x 197 mm, precisa de varetas e arruelas.",
+  "capa": "e2eec7081131.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Cascade Connect, ligue 4 (dupla)",
   "url": "https://makerworld.com/en/models/737254-cascade-connect-a-self-sorting-connect-4",
-  "nota": "14 a 25 h."
+  "nota": "14 a 25 h.",
+  "capa": "22b0e39ff831.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Board game de corrida (dupla)",
   "url": "https://www.printables.com/model/177536-fun-board-game-for-the-whole-family",
-  "nota": ""
+  "nota": "",
+  "capa": "feeaff41176f.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "link",
   "nome": "Pentominoes",
   "url": "https://www.printables.com/model/36470-pentominoes-pocket-puzzle",
-  "nota": ""
+  "nota": "",
+  "capa": "736ac78be39f.jpg"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Torre de argolas gigantes da Celina, topo fixo no pino",
-  "nota": ""
+  "nota": "",
+  "conceito": "argolas"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Blocos de encaixe gigantes de 70 mm",
-  "nota": ""
+  "nota": "",
+  "conceito": "blocos"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Jogo da velha das irmãs: sol e lua, nomes gravados",
-  "nota": ""
+  "nota": "",
+  "conceito": "velha"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Trilha da Família: tabuleiro em 4 quadrantes, peões com iniciais",
-  "nota": ""
+  "nota": "",
+  "conceito": "trilha"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Quebra-cabeça com foto da família em relevo",
-  "nota": ""
+  "nota": "",
+  "conceito": "foto"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Dominó de bichos gigante",
-  "nota": ""
+  "nota": "",
+  "conceito": "domino"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Pista de bola gigante com bola de pingue-pongue de 40 mm",
-  "nota": ""
+  "nota": "",
+  "conceito": "pista"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Placa sensorial de texturas",
-  "nota": ""
+  "nota": "",
+  "conceito": "sensorial"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Boliche gigante com bola de tênis",
-  "nota": ""
+  "nota": "",
+  "conceito": "boliche"
  },
  {
   "grupo": "Celina (11 meses) e Antonella (5 anos)",
   "tipo": "criar",
   "nome": "Memória de pares com A, C e bichos",
-  "nota": ""
+  "nota": "",
+  "conceito": "memoria"
  }
 ]
