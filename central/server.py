@@ -5,7 +5,7 @@ Só lê arquivos (progresso.txt, status.json, imagens, gcode, stl). Nunca abre a
 """
 import json, os, re, subprocess, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import toolpath
+import toolpath, biblioteca
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,6 +13,10 @@ PORTA = 8090
 _tok = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".token")
 TOKEN = os.environ.get("CENTRAL_TOKEN") or (open(_tok).read().strip() if os.path.exists(_tok) else "")
 IMAGENS = {"frente": "latest_full.jpg", "bico": "bico.jpg", "cima": "cam2/cam2.jpg", "painel": "painel.jpg"}
+try:
+    IMAGENS["cima"] = json.load(open(os.path.join(RAIZ, "cameras.json"))).get("cima", IMAGENS["cima"])
+except Exception:
+    pass
 RE_TEMPO = re.compile(r"(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s)?")
 _cache = {}
 
@@ -224,8 +228,8 @@ class H(BaseHTTPRequestHandler):
         try:
             if rota in ("/", "/index.html"):
                 return self.envia(open(caminho("central/index.html"), "rb").read(), "text/html; charset=utf-8")
-            if rota == "/vista3d.js":
-                return self.envia(open(caminho("central/vista3d.js"), "rb").read(), "text/javascript; charset=utf-8")
+            if rota in ("/vista3d.js", "/modelos.js"):
+                return self.envia(open(caminho("central" + rota), "rb").read(), "text/javascript; charset=utf-8")
             if rota == "/api/estado":
                 return self.envia(json.dumps(estado()).encode(), "application/json")
             if rota == "/api/fila":
@@ -234,6 +238,15 @@ class H(BaseHTTPRequestHandler):
                 leve = caminho(f"web_{rota[5:]}.jpg")   # versão reduzida gerada pelo painel.py
                 arq = leve if os.path.exists(leve) and os.path.getmtime(leve) > time.time() - 10 else caminho(IMAGENS[rota[5:]])
                 return self.envia(open(arq, "rb").read(), "image/jpeg")
+            if rota in ("/api/modelos", "/api/modelo/mini", "/api/modelo/stl"):
+                from urllib.parse import parse_qs, urlparse
+                id_ = parse_qs(urlparse(self.path).query).get("id", [""])[0]
+                if rota == "/api/modelos":
+                    return self.envia(json.dumps(biblioteca.lista()).encode(), "application/json")
+                dado = biblioteca.miniatura(id_) if rota.endswith("mini") else biblioteca.stl(id_)
+                if dado:
+                    return self.envia(dado, "image/png" if rota.endswith("mini") else "model/stl")
+                return self.envia(b"", "text/plain", 404)
             if rota == "/api/toolpath":
                 from urllib.parse import parse_qs, urlparse
                 arq = os.path.basename(parse_qs(urlparse(self.path).query).get("a", [""])[0])

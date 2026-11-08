@@ -67,7 +67,30 @@
   pre.log{margin:0;padding:12px 14px;font-size:12px;color:var(--mut);white-space:pre-wrap;min-height:80px}
   #grande{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;place-items:center;z-index:9;cursor:zoom-out}
   #grande img{max-width:96vw;max-height:94vh}
+  nav.abas{display:flex;gap:6px}
+  nav.abas button{background:none;border:1px solid var(--line);color:var(--mut);border-radius:99px;padding:6px 14px;font:600 13px Inter,sans-serif;cursor:pointer}
+  nav.abas button.on{background:rgba(255,138,61,.15);border-color:var(--acc);color:#ffd2b3}
+  #abaModelos{display:none;padding:16px 20px}
+  .mtopo{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+  .mtopo h2{margin:0;font-size:18px}
+  .mtopo span{color:var(--mut);font-size:13px}
+  #mGrade{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden;cursor:pointer;text-align:left;color:var(--txt);font:inherit}
+  .mcard:hover{border-color:#4a525c}
+  .mcard.on{border-color:var(--acc)}
+  .mthumb{aspect-ratio:1;background:#202429;display:grid;place-items:center;color:#59616b;font:800 22px Inter,sans-serif}
+  .mthumb img{width:100%;height:100%;object-fit:contain}
+  .mnome{padding:8px 10px 2px;font-size:13px;font-weight:600;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .mmeta{padding:0 10px 10px;font-size:11px;color:var(--mut)}
+  .mviewer{display:none;margin-bottom:16px}
+  #mvBox{height:420px;position:relative}
+  #mvBox canvas{display:block;width:100%;height:100%}
+  .mvcab{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .mvcab b{font-size:16px}
+  .mvcab span{color:var(--mut);font-size:13px}
   @media (max-width:900px){
+    #abaModelos{padding:12px 16px}
+    #mvBox{height:320px}
     main{grid-template-columns:1fr;padding:12px 16px}
     .cams,.baixo{grid-template-columns:1fr}
     .cams{order:-1}
@@ -82,9 +105,15 @@
   <h1>Central da Impressora</h1>
   <span class="peca" id="peca">...</span>
   <span class="badge" id="badge">...</span>
+  <nav class="abas"><button id="tImp" class="on">Impressão</button><button id="tMod">Modelos</button></nav>
   <span class="relogio" id="relogio"></span>
 </header>
-<main>
+<section id="abaModelos">
+  <div class="card mviewer"><div class="mvcab"><b id="mvTitulo"></b><span id="mvInfo"></span></div><div id="mvBox"></div></div>
+  <div class="mtopo"><h2>Modelos baixados</h2><span id="mTotal"></span><span>Downloads e pasta modelos/ · toque para ver em 3D</span></div>
+  <div id="mGrade"></div>
+</section>
+<main id="abaImp">
   <section class="card">
     <h2>Caminho do bico em 3D (cada filete do gcode)</h2>
     <div id="vista3d">
@@ -157,6 +186,7 @@
 </script>
 <script type="module">
 import { criaVista } from "/vista3d.js";
+import { carregaModelos } from "/modelos.js";
 
 const $ = id => document.getElementById(id);
 const hm = s => { if (s == null || isNaN(s)) return "--"; s = Math.round(s); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
@@ -190,6 +220,19 @@ let legendaOn = false;
 function legendaVisivel(v){ $("legenda3d").style.display = v && legendaOn ? "flex" : "none"; }
 $("bLeg").onclick = e => { legendaOn = e.target.classList.toggle("on"); legendaVisivel(true); };
 document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => v3.vista(b.dataset.v));
+
+/* ---------- abas ---------- */
+let modelosCarregados = false;
+function aba(qual){
+  const mod = qual === "mod";
+  $("abaImp").style.display = mod ? "none" : ""; $("abaModelos").style.display = mod ? "block" : "none";
+  $("tImp").classList.toggle("on", !mod); $("tMod").classList.toggle("on", mod);
+  if (mod && !modelosCarregados) { modelosCarregados = true; carregaModelos(); }
+  try { localStorage.setItem("aba", qual); } catch {}
+  if (!mod) dispatchEvent(new Event("resize"));
+}
+$("tImp").onclick = () => aba("imp"); $("tMod").onclick = () => aba("mod");
+try { if (location.hash === "#modelos" || localStorage.getItem("aba") === "mod") aba("mod"); } catch {}
 
 /* ---------- câmeras ---------- */
 const cams = ["frente","bico","cima"];

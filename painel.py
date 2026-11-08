@@ -1,7 +1,7 @@
 """Painel único: 2 câmeras (frente iPhone 1, cima iPhone 2), cada uma normal + zoom, com detecção YOLO
 desenhada por cima, mais progresso. q sai.
 O zoom da câmera de cima segue a peça (região onde a mesa mudou desde o começo da impressão)."""
-import cv2, numpy as np, os, time
+import cv2, json, numpy as np, os, time
 from ultralytics import YOLO
 MODEL = YOLO(os.environ.get("YOLO_MODEL", "yolo11m.pt"))  # ultralytics baixa o peso se faltar
 def le(p):
@@ -23,6 +23,8 @@ def yolo(im):
         cv2.rectangle(out, (x0, y0), (x1, y1), (0, 255, 255), 3)
         cv2.putText(out, f"{n} {float(b.conf):.2f}", (x0, max(20, y0 - 8)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
     return out, nomes
+try: CIMA = json.load(open("cameras.json")).get("cima", "cam2/cam2.jpg")
+except Exception: CIMA = "cam2/cam2.jpg"
 ref = None; zb = None
 import json
 saude_ant = {}
@@ -37,7 +39,7 @@ def saude(nome, im):
     return {"ok": motivo is None, "motivo": motivo, "brilho": round(brilho, 1), "nitidez": round(nitidez, 1), "mudanca": mexeu}
 congelado = {}
 while True:
-    frente, cima, bico = le("latest_full.jpg"), le("cam2/cam2.jpg"), le("bico.jpg")
+    frente, cima, bico = le("latest_full.jpg"), le(CIMA), le("bico.jpg")
     zc = None
     if cima is not None:
         h, w = cima.shape[:2]

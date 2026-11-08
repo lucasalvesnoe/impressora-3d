@@ -2,7 +2,10 @@
 Salva latest.jpg (recorte) e latest_full.jpg a cada 1s."""
 import cv2, time, numpy as np
 import os
-FONTE = os.environ.get("CAM_FRENTE", "1")   # índice AVFoundation ou caminho de um .jpg (iPhone pela página cam2)
+import json
+try: _cfg = json.load(open("cameras.json"))
+except Exception: _cfg = {}
+FONTE = os.environ.get("CAM_FRENTE") or str(_cfg.get("frente", "1"))   # índice AVFoundation ou caminho de um .jpg (iPhone pela página cam2)
 class Arquivo:
     """Lê quadros de um jpg que outro processo atualiza (cam2/frente.jpg)."""
     def __init__(s, p): s.p, s.t = p, 0

@@ -1,0 +1,5 @@
+{
+  "_como_usar": "frente = fonte do zoom.py. Opções: número = câmera do Mac pelo AVFoundation (0 = FaceTime do MacBook, 1 = iPhone por continuidade quando conectado); caminho .jpg = iPhone pela página cam2 (https://IP_DO_MAC:8443/?nome=frente grava cam2/frente.jpg). A variável CAM_FRENTE, se existir, vence este arquivo. cima = arquivo que o painel lê como segunda câmera.",
+  "frente": "0",
+  "cima": "cam2/cam2.jpg"
+}
