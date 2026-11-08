@@ -238,6 +238,8 @@ class H(BaseHTTPRequestHandler):
                 leve = caminho(f"web_{rota[5:]}.jpg")   # versão reduzida gerada pelo painel.py
                 arq = leve if os.path.exists(leve) and os.path.getmtime(leve) > time.time() - 10 else caminho(IMAGENS[rota[5:]])
                 return self.envia(open(arq, "rb").read(), "image/jpeg")
+            if rota == "/api/ideias":
+                return self.envia(open(caminho("central/ideias.json"), "rb").read(), "application/json")
             if rota in ("/api/modelos", "/api/modelo/mini", "/api/modelo/stl"):
                 from urllib.parse import parse_qs, urlparse
                 id_ = parse_qs(urlparse(self.path).query).get("id", [""])[0]

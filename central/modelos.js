@@ -73,8 +73,30 @@ export async function carregaModelos() {
       <div class="mmeta">${dia(m.data)} · ${kb(m.tamanho)}</div>
     </button>`).join("");
   $("mTotal").textContent = `${lista.length} modelos`;
+  carregaIdeias();
   document.querySelectorAll(".mcard").forEach(b => b.onclick = () => {
     document.querySelectorAll(".mcard").forEach(x => x.classList.remove("on")); b.classList.add("on");
     abre(lista[+b.dataset.i]);
   });
+}
+
+
+// Planejados: pesquisa de 08/11/2026 (central/ideias.json, gerado de docs/IDEIAS.md)
+export async function carregaIdeias() {
+  let ideias = [];
+  try { ideias = await (await fetch("/api/ideias")).json(); } catch { return; }
+  const grupos = [...new Set(ideias.map(i => i.grupo))];
+  const regra = "Celina: menor dimensão acima de 4,5 cm, nada que solte ou quebre em pedaço pequeno, 4 perímetros, arestas arredondadas, sem ímã ou pilha. PLA não é mordedor.";
+  $("mIdeias").innerHTML = grupos.map(g => {
+    const itens = ideias.filter(i => i.grupo === g);
+    const nl = itens.filter(i => i.tipo === "link").length, nc = itens.filter(i => i.tipo === "criar").length;
+    return `<section class="igrupo"><h2>Planejado: ${esc(g)}</h2><p class="sub">${nl} prontos para baixar · ${nc} para modelarmos</p><div class="ilista">
+      ${g.includes("Celina") ? `<div class="ideia regra"><span class="tag aviso">segurança</span><b>${esc(regra)}</b></div>` : ""}
+      ${itens.map(i => i.tipo === "link"
+        ? `<a class="ideia" href="${esc(i.url)}" target="_blank" rel="noopener"><span class="tag baixar">baixar</span><b>${esc(i.nome)}</b>${i.nota ? `<span>${esc(i.nota)}</span>` : ""}<span>${esc(new URL(i.url).hostname.replace("www.", ""))}</span></a>`
+        : i.tipo === "criar"
+        ? `<div class="ideia"><span class="tag criar">vamos criar</span><b>${esc(i.nome)}</b></div>`
+        : `<div class="ideia"><span class="tag aviso">atenção</span><b>${esc(i.nome)}</b></div>`).join("")}
+    </div></section>`;
+  }).join("");
 }
