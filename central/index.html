@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central da Impressora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#101214; --card:#1a1d21; --line:#2a2f35; --txt:#e8e6e1; --mut:#8b929a;
+    --acc:#ff8a3d; --ok:#4cc38a; --warn:#f2c94c; --bad:#ef5a5a;
+    --lcd-bg:#1d3fae; --lcd-txt:#e9f0ff; --lcd-dim:#9fb4ee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif}
+  header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.2px}
+  header .peca{font-size:20px;color:var(--acc);font-weight:800}
+  .badge{padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;background:#2b3138;color:var(--mut)}
+  .badge.on{background:rgba(76,195,138,.15);color:var(--ok)}
+  .badge.fim{background:rgba(255,138,61,.15);color:var(--acc)}
+  header .relogio{margin-left:auto;font-family:VT323,monospace;font-size:28px;color:var(--mut)}
+  main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;padding:16px 20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .card h2{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:0;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600}
+  #vista3d{height:520px;position:relative;touch-action:none}
+  #vista3d canvas{display:block;width:100%;height:100%}
+  #vista3d .legenda{position:absolute;left:12px;bottom:10px;font-size:12px;color:#c9ced4;display:flex;gap:4px 12px;flex-wrap:wrap;max-width:70%;
+     background:rgba(16,18,20,.6);padding:6px 10px;border-radius:8px;backdrop-filter:blur(4px)}
+  #vista3d .hud{position:absolute;right:12px;top:12px;font-family:VT323,monospace;font-size:26px;color:#fff;text-align:right;
+     background:rgba(16,18,20,.6);padding:4px 12px;border-radius:8px;line-height:1.1}
+  #vista3d .hud small{display:block;font-size:17px;color:var(--mut)}
+  .barra3d{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+  .barra3d button{background:#262b31;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font:600 12px Inter,sans-serif;cursor:pointer}
+  .barra3d button:hover{border-color:#4a525c}
+  .barra3d button.on{background:rgba(255,138,61,.18);border-color:var(--acc);color:#ffd2b3}
+  .barra3d input[type=range]{flex:1;min-width:110px;accent-color:var(--acc)}
+  .barra3d .sep{width:1px;height:22px;background:var(--line)}
+  .pino{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  #semModelo{position:absolute;inset:40px 0 0 0;display:none;place-items:center;color:var(--mut)}
+  .direita{display:flex;flex-direction:column;gap:16px}
+  .lcd{background:var(--lcd-bg);margin:14px;border-radius:6px;padding:14px 18px;font-family:VT323,monospace;color:var(--lcd-txt);
+       box-shadow:inset 0 0 0 3px #0e2470, inset 0 0 40px rgba(0,0,0,.35)}
+  .lcd .lin{display:flex;justify-content:space-between;font-size:30px;line-height:1.15}
+  .lcd .rot{color:var(--lcd-dim)}
+  .lcd .barra{height:16px;border:2px solid var(--lcd-txt);margin:8px 0 6px}
+  .lcd .barra i{display:block;height:100%;background:var(--lcd-txt);width:0}
+  .lcd .cmd{font-size:20px;color:var(--lcd-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dados{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+  .dados div{background:var(--card);padding:12px 14px}
+  .dados b{display:block;font-size:22px;font-weight:800}
+  .dados span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+  .cams{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .cam img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#000;display:block;cursor:zoom-in}
+  .cam .aviso{position:absolute;top:44px;left:10px;right:10px;background:rgba(239,90,90,.9);color:#fff;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;display:none}
+  .progresso{grid-column:1 / -1;padding:14px 18px}
+  .trilho{height:14px;background:#262b31;border-radius:99px;overflow:hidden}
+  .trilho i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),#ffb86b);width:0;transition:width .6s}
+  .progresso .info{display:flex;justify-content:space-between;margin-top:8px;color:var(--mut);font-size:14px;flex-wrap:wrap;gap:8px}
+  .progresso .info b{color:var(--txt)}
+  .baixo{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+  ul.fila{list-style:none;margin:0;padding:6px 0}
+  ul.fila li{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:14px}
+  ul.fila li.atual{background:rgba(255,138,61,.08)}
+  ul.fila li .t{margin-left:auto;color:var(--mut);font-family:VT323,monospace;font-size:20px}
+  pre.log{margin:0;padding:12px 14px;font-size:12px;color:var(--mut);white-space:pre-wrap;min-height:80px}
+  #grande{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;place-items:center;z-index:9;cursor:zoom-out}
+  #grande img{max-width:96vw;max-height:94vh}
+  @media (max-width:900px){
+    main{grid-template-columns:1fr;padding:12px 16px}
+    .cams,.baixo{grid-template-columns:1fr}
+    #vista3d{height:320px}
+    .lcd .lin{font-size:24px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Central da Impressora</h1>
+  <span class="peca" id="peca">...</span>
+  <span class="badge" id="badge">...</span>
+  <span class="relogio" id="relogio"></span>
+</header>
+<main>
+  <section class="card">
+    <h2>Caminho do bico em 3D (cada filete do gcode)</h2>
+    <div id="vista3d">
+      <div id="semModelo">Carregando caminho do gcode...</div>
+      <div class="hud" id="hud3d">--<small>ao vivo</small></div>
+      <div class="legenda" id="legenda3d"></div>
+    </div>
+    <div class="barra3d">
+      <button id="bVivo" class="on">Ao vivo</button>
+      <input type="range" id="sCamada" min="0" max="1" value="0" aria-label="camada">
+      <span class="sep"></span>
+      <button id="bSo">Só a camada</button>
+      <button id="bCorte">Cortar ao meio</button>
+      <button id="bCor">Cor: por tipo</button>
+      <span class="sep"></span>
+      <button data-v="iso">Iso</button><button data-v="topo">Topo</button><button data-v="frente">Frente</button>
+    </div>
+  </section>
+
+  <div class="direita">
+    <section class="card">
+      <h2>Display da impressora</h2>
+      <div class="lcd">
+        <div class="lin"><span class="rot">BICO</span><span id="lBico">--</span></div>
+        <div class="lin"><span class="rot">MESA</span><span id="lMesa">--</span></div>
+        <div class="lin"><span class="rot">Z</span><span id="lZ">--</span></div>
+        <div class="lin"><span class="rot">CAMADA</span><span id="lCam">--</span></div>
+        <div class="barra"><i id="lBarra"></i></div>
+        <div class="lin"><span id="lPct">0%</span><span id="lTempo">00:00</span></div>
+        <div class="cmd" id="lCmd"></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Dados</h2>
+      <div class="dados">
+        <div><span>decorrido</span><b id="dDec">--</b></div>
+        <div><span>falta</span><b id="dFalta">--</b></div>
+        <div><span>termina às</span><b id="dFim">--</b></div>
+        <div><span>estimado</span><b id="dEst">--</b></div>
+        <div><span>filamento</span><b id="dFil">--</b></div>
+        <div><span>linha</span><b id="dLin">--</b></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card progresso">
+    <div class="trilho"><i id="barra"></i></div>
+    <div class="info"><span id="pInfo">...</span><span id="pCam">...</span></div>
+  </section>
+
+  <div class="cams">
+    <section class="card cam"><h2>Frente</h2><div class="aviso" id="av-frente"></div><img id="img-frente" alt="câmera da frente"></section>
+    <section class="card cam"><h2>Zoom do bico</h2><div class="aviso" id="av-bico"></div><img id="img-bico" alt="zoom do bico"></section>
+    <section class="card cam"><h2>Cima</h2><div class="aviso" id="av-cima"></div><img id="img-cima" alt="câmera de cima"></section>
+  </div>
+
+  <div class="baixo">
+    <section class="card"><h2>Arquivos prontos</h2><ul class="fila" id="fila"></ul></section>
+    <section class="card"><h2>Registro</h2><pre class="log" id="log"></pre></section>
+  </div>
+</main>
+<div id="grande"><img alt=""></div>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import { criaVista } from "/vista3d.js";
+
+const $ = id => document.getElementById(id);
+const hm = s => { if (s == null || isNaN(s)) return "--"; s = Math.round(s); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+  return h ? `${h}h${String(m).padStart(2,"0")}` : `${m}:${String(x).padStart(2,"0")}`; };
+const dur = s => s == null ? "--" : (s >= 3600 ? hm(s) : Math.round(s/60) + " min");
+const relogio = t => new Date(t*1000).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+
+/* ---------- 3D (caminho do gcode) ---------- */
+const sl = $("sCamada");
+const v3 = criaVista($("vista3d"), st => {
+  sl.max = st.camadas - 1; if (st.aoVivo) sl.value = st.camada;
+  $("hud3d").innerHTML = `camada ${st.camada + 1}/${st.camadas}<small>Z ${st.z.toFixed(2)} mm · ${st.aoVivo ? "ao vivo" : "navegando (bico na " + (st.camAtual + 1) + ")"}</small>`;
+  $("bVivo").classList.toggle("on", st.aoVivo);
+});
+let arquivoModelo = null;
+function legenda(){
+  const L = v3.legenda(), usados = v3.tiposUsados();
+  $("legenda3d").innerHTML = usados.map(i => `<span><i class="pino" style="background:${L[i].cor}"></i>${L[i].nome}</span>`).join("") + `<span style="color:#8b929a">arraste gira · roda aproxima</span>`;
+}
+async function carregaModelo(arquivo, cor){
+  arquivoModelo = arquivo;
+  try { await v3.carrega(arquivo, cor); $("semModelo").style.display = "none"; legenda(); }
+  catch { $("semModelo").textContent = "Sem caminho para este arquivo"; $("semModelo").style.display = "grid"; }
+}
+sl.addEventListener("input", () => v3.camada(+sl.value));
+$("bVivo").onclick = () => v3.aoVivo();
+$("bSo").onclick = e => { const on = e.target.classList.toggle("on"); v3.soCamada(on); };
+$("bCorte").onclick = e => { const on = e.target.classList.toggle("on"); v3.corte(on); };
+$("bCor").onclick = e => { const fil = e.target.textContent.includes("tipo"); e.target.textContent = fil ? "Cor: filamento" : "Cor: por tipo"; v3.cores(fil ? "filamento" : "tipo"); legendaVisivel(!fil); };
+function legendaVisivel(v){ $("legenda3d").style.display = v ? "flex" : "none"; }
+document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => v3.vista(b.dataset.v));
+
+/* ---------- câmeras ---------- */
+const cams = ["frente","bico","cima"];
+function trocaImg(nome){
+  const img = new Image();
+  img.onload = () => { $("img-"+nome).src = img.src; };
+  img.src = `/img/${nome}?t=${Date.now()}`;
+}
+cams.forEach(n => $("img-"+n).addEventListener("click", e => { $("grande").style.display="grid"; $("grande").querySelector("img").src = e.target.src; }));
+$("grande").addEventListener("click", () => $("grande").style.display = "none");
+setInterval(() => cams.forEach(trocaImg), 1500); cams.forEach(trocaImg);
+
+/* ---------- estado ---------- */
+function temp(atual, alvo){
+  if (atual == null) return alvo ? `--/${Math.round(alvo)}°` : "--";
+  return `${Math.round(atual)}/${Math.round(alvo||0)}°`;
+}
+async function atualiza(){
+  let e; try { e = await (await fetch("/api/estado")).json(); } catch { $("badge").textContent = "central offline"; return; }
+  $("peca").textContent = e.nome || "nada carregado";
+  const b = $("badge"); b.className = "badge " + (e.imprimindo ? "on" : (e.frac >= 1 ? "fim" : ""));
+  b.textContent = e.imprimindo ? "imprimindo" : (e.frac >= 1 ? "terminou" : "parada");
+  if (e.arquivo && e.arquivo !== arquivoModelo) carregaModelo(e.arquivo, e.cor);
+  v3.progresso(e.imprimindo || e.frac < 1 ? e.linha : 1e12);
+  const pct = Math.floor(e.frac*100);
+  const velho = e.temp_idade != null && e.temp_idade > 30;
+  $("lBico").textContent = temp(velho ? null : e.bico, e.bico_alvo);
+  $("lMesa").textContent = temp(velho ? null : e.mesa, e.mesa_alvo);
+  $("lZ").textContent = (e.z||0).toFixed(2) + " mm";
+  $("lCam").textContent = e.camadas ? `${e.camada}/${e.camadas}` : "--";
+  $("lBarra").style.width = pct + "%"; $("lPct").textContent = pct + "%";
+  $("lTempo").textContent = hm(e.decorrido); $("lCmd").textContent = e.cmd || "";
+  $("dDec").textContent = hm(e.decorrido); $("dFalta").textContent = e.imprimindo ? hm(e.restante) : "--";
+  $("dFim").textContent = e.imprimindo && e.restante != null ? relogio(e.agora + e.restante) : "--";
+  $("dEst").textContent = dur(e.tempo_est);
+  $("dFil").textContent = e.filamento_mm ? (e.filamento_mm/1000).toFixed(2) + " m" : "--";
+  $("dLin").textContent = `${e.linha}/${e.total}`;
+  $("barra").style.width = (e.frac*100) + "%";
+  $("pInfo").innerHTML = `<b>${pct}%</b> · camada <b>${e.camada||0}</b> de ${e.camadas||"?"} · Z ${(e.z||0).toFixed(2)} de ${(e.z_max||0).toFixed(2)} mm`;
+  $("pCam").innerHTML = e.imprimindo && e.restante != null ? `falta <b>${hm(e.restante)}</b>, termina às <b>${relogio(e.agora+e.restante)}</b>` : "";
+  for (const n of cams){
+    const t = e.imagens[n], av = $("av-"+n), idade = t ? e.agora - t : null;
+    if (idade == null || idade > 15){ av.style.display = "block"; av.textContent = idade == null ? "sem imagem" : `câmera parada há ${hm(idade)}`; }
+    else av.style.display = "none";
+  }
+  $("log").textContent = (e.log||[]).join("\n") || "sem registro";
+  document.querySelectorAll("#fila li").forEach(li => li.classList.toggle("atual", li.dataset.a === e.arquivo));
+}
+async function fila(){
+  try {
+    const f = await (await fetch("/api/fila")).json();
+    $("fila").innerHTML = f.map(x => `<li data-a="${x.arquivo}"><i class="pino" style="background:${x.cor||'#888'}"></i>${x.nome}<span class="t">${dur(x.tempo_est)}</span></li>`).join("");
+  } catch {}
+}
+setInterval(() => $("relogio").textContent = new Date().toLocaleTimeString("pt-BR"), 1000);
+fila(); atualiza(); setInterval(atualiza, 2000); setInterval(fila, 30000);
+</script>
+</body>
+</html>

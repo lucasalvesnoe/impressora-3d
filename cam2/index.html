@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Camera 2</title>
+<style>body{margin:0;background:#111;color:#eee;font:16px -apple-system}video{width:100%}#s{padding:8px}</style></head>
+<body><div id="s">Toque em INICIAR e permita a camera.</div><button id="b" style="font-size:22px;width:100%;padding:14px">INICIAR</button>
+<video id="v" playsinline muted></video><canvas id="c" style="display:none"></canvas>
+<script>
+const v=document.getElementById('v'),c=document.getElementById('c'),s=document.getElementById('s');let n=0;let sending=false;
+async function keepAwake(){try{if('wakeLock' in navigator){await navigator.wakeLock.request('screen');}}catch(e){}}
+document.getElementById('b').onclick=async()=>{
+ try{
+  await keepAwake();
+  const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}},audio:false});
+  v.srcObject=st;await v.play();s.textContent='Enviando...';
+  setInterval(()=>{
+   if(sending) return;
+   c.width=v.videoWidth;c.height=v.videoHeight;
+   c.getContext('2d').drawImage(v,0,0);
+   c.toBlob(b=>{
+    if(!b) return;
+    sending=true;
+    fetch('/frame',{method:'POST',body:b})
+      .then(()=>{n++;s.textContent='Enviando, quadros: '+n})
+      .catch(e=>{s.textContent='erro: '+e})
+      .finally(()=>{sending=false;});
+   },'image/jpeg',0.8);
+  },800);
+ }catch(e){s.textContent='erro: '+e}
+};
+document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible')await keepAwake();});
+</script></body></html>

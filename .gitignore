@@ -1,0 +1,26 @@
+# runtime: imagens das câmeras, estado da impressão, logs
+*.jpg
+*.png
+!docs/*.png
+progresso.txt
+status.json
+status.json.tmp
+*.log
+cam2/log.txt
+
+# certificado local do servidor da câmera 2 (gerado em cada máquina)
+cam2/*.pem
+
+# gcode fatiado e modelos baixados (licenças variam; cada um baixa os seus)
+*.gcode
+modelos/
+
+# anotações de sessão (contexto pessoal)
+handoffs/
+
+# ambiente
+.venv/
+__pycache__/
+*.pt
+.DS_Store
+central/.token

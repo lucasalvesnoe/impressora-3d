@@ -1,0 +1,7 @@
+{
+  "apito_z.gcode":        {"nome": "Apito",                 "stl": "modelos/novos/apito.stl", "cor": "#d9d9d9"},
+  "dumpling_base_z.gcode":{"nome": "Dumpling: cesto (base)","stl": "modelos/novos/dumpling_base.stl", "cor": "#8a5a3b"},
+  "dumpling_topo_z.gcode":{"nome": "Dumpling: topo",        "stl": "modelos/novos/dumpling_topo.stl", "cor": "#f2efe6"},
+  "gato.gcode":           {"nome": "Gato",                  "stl": "modelos/gato/gato.stl",           "cor": "#d9d9d9"},
+  "croissant.gcode":      {"nome": "Croissant",             "stl": "modelos/croissant/croissant_fidget_toy.stl", "cor": "#e0b060"}
+}
