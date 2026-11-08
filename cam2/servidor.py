@@ -12,7 +12,10 @@ class H(http.server.SimpleHTTPRequestHandler):
                 tmp = os.path.join(D, f'cam2_{threading.get_ident()}.tmp')
                 with open(tmp, 'wb') as f:
                     f.write(b)
-                os.replace(tmp, os.path.join(D, 'cam2.jpg'))
+                from urllib.parse import parse_qs, urlparse
+                nome = parse_qs(urlparse(s.path).query).get('nome', ['cam2'])[0]
+                nome = nome if nome.isalnum() else 'cam2'      # ?nome=frente grava frente.jpg (outro iPhone)
+                os.replace(tmp, os.path.join(D, nome + '.jpg'))
             s.send_response(204)
             s.end_headers()
         except Exception as e:

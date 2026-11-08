@@ -1,7 +1,18 @@
 """Visao ao vivo que segue a impressora (recorte automatico na parte preta). q sai.
 Salva latest.jpg (recorte) e latest_full.jpg a cada 1s."""
 import cv2, time, numpy as np
-cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
+import os
+FONTE = os.environ.get("CAM_FRENTE", "1")   # índice AVFoundation ou caminho de um .jpg (iPhone pela página cam2)
+class Arquivo:
+    """Lê quadros de um jpg que outro processo atualiza (cam2/frente.jpg)."""
+    def __init__(s, p): s.p, s.t = p, 0
+    def read(s):
+        try:
+            t = os.path.getmtime(s.p)
+            if t == s.t: time.sleep(0.05); return False, None
+            s.t = t; f = cv2.imread(s.p); return f is not None, f
+        except OSError: time.sleep(0.2); return False, None
+cap = cv2.VideoCapture(int(FONTE), cv2.CAP_AVFOUNDATION) if FONTE.isdigit() else Arquivo(FONTE)
 box = None; last = 0; nb = None; nframes = 0
 while True:
     ok, f = cap.read()

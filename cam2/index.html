@@ -17,7 +17,7 @@ document.getElementById('b').onclick=async()=>{
    c.toBlob(b=>{
     if(!b) return;
     sending=true;
-    fetch('/frame',{method:'POST',body:b})
+    fetch('/frame'+location.search,{method:'POST',body:b})
       .then(()=>{n++;s.textContent='Enviando, quadros: '+n})
       .catch(e=>{s.textContent='erro: '+e})
       .finally(()=>{sending=false;});
