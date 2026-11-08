@@ -26,3 +26,4 @@ __pycache__/
 central/.token
 cams.json
 cams.json.tmp
+web_*.jpg

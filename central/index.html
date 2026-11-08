@@ -188,9 +188,13 @@ document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => v3.vista(b.
 
 /* ---------- câmeras ---------- */
 const cams = ["frente","bico","cima"];
+const pendente = {};
 function trocaImg(nome){
+  if (pendente[nome]) return;          // não empilha pedidos quando a conexão está lenta
+  pendente[nome] = true;
   const img = new Image();
-  img.onload = () => { $("img-"+nome).src = img.src; };
+  img.onload = () => { $("img-"+nome).src = img.src; pendente[nome] = false; };
+  img.onerror = () => { pendente[nome] = false; };
   img.src = `/img/${nome}?t=${Date.now()}`;
 }
 cams.forEach(n => $("img-"+n).addEventListener("click", e => { $("grande").style.display="grid"; $("grande").querySelector("img").src = e.target.src; }));

@@ -231,7 +231,9 @@ class H(BaseHTTPRequestHandler):
             if rota == "/api/fila":
                 return self.envia(json.dumps(fila()).encode(), "application/json")
             if rota.startswith("/img/") and rota[5:] in IMAGENS:
-                return self.envia(open(caminho(IMAGENS[rota[5:]]), "rb").read(), "image/jpeg")
+                leve = caminho(f"web_{rota[5:]}.jpg")   # versão reduzida gerada pelo painel.py
+                arq = leve if os.path.exists(leve) and os.path.getmtime(leve) > time.time() - 10 else caminho(IMAGENS[rota[5:]])
+                return self.envia(open(arq, "rb").read(), "image/jpeg")
             if rota == "/api/toolpath":
                 from urllib.parse import parse_qs, urlparse
                 arq = os.path.basename(parse_qs(urlparse(self.path).query).get("a", [""])[0])

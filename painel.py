@@ -62,6 +62,10 @@ while True:
             if congelado[k] > 10 and v["ok"]: v.update(ok=False, motivo="imagem congelada")
         open("cams.json.tmp", "w").write(json.dumps(sd)); os.replace("cams.json.tmp", "cams.json")
     except Exception: pass
+    for nome, im in (("frente", frente), ("cima", cima), ("bico", bico)):   # versões leves para a central pela internet
+        if im is not None:
+            k = 960 / max(im.shape[:2])
+            cv2.imwrite(f"web_{nome}.jpg", cv2.resize(im, (int(im.shape[1] * k), int(im.shape[0] * k))) if k < 1 else im, [cv2.IMWRITE_JPEG_QUALITY, 72])
     fy, fn = yolo(frente); cy_, cn = yolo(cima)
     A = rotulo(caixa(fy, 640, 360), "FRENTE normal + IA " + ",".join(sorted(set(fn)))[:30])
     B = rotulo(caixa(bico, 640, 360), "FRENTE zoom (bico)")
