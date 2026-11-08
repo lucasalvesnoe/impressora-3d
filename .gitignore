@@ -24,3 +24,5 @@ __pycache__/
 *.pt
 .DS_Store
 central/.token
+cams.json
+cams.json.tmp

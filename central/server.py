@@ -95,6 +95,29 @@ def inicio_processo():
         return None
 
 
+def ler_json(rel):
+    try:
+        return json.load(open(caminho(rel)))
+    except Exception:
+        return {}
+
+
+def registro(ativo, arquivo, inicio, i, total):
+    linhas = []
+    if inicio:
+        linhas.append(f"{time.strftime('%H:%M', time.localtime(inicio))} início de {arquivo}")
+    if ativo:
+        linhas.append(f"{time.strftime('%H:%M')} enviando linha {i} de {total}")
+    try:
+        linhas += [l for l in open(caminho("imprime.log")).read().strip().splitlines()[-4:] if l]
+    except Exception:
+        pass
+    for nome, v in ler_json("cams.json").items():
+        if not v.get("ok", True):
+            linhas.append(f"câmera {nome}: {v.get('motivo')}")
+    return linhas
+
+
 def estado():
     ativo = processo_ativo()
     st = {}
@@ -139,7 +162,8 @@ def estado():
         "mesa": st.get("mesa"), "mesa_alvo": st.get("mesa_alvo") or g.get("mesa_alvo"),
         "temp_idade": (agora - st["temp_em"]) if st.get("temp_em") else None,
         "imagens": {k: (os.path.getmtime(caminho(v)) if os.path.exists(caminho(v)) else None) for k, v in IMAGENS.items()},
-        "log": open(caminho("imprime.log")).read().strip().splitlines()[-5:] if os.path.exists(caminho("imprime.log")) else [],
+        "log": registro(ativo, arquivo, inicio, i, total),
+        "saude": ler_json("cams.json"),
         "agora": agora,
     }
 

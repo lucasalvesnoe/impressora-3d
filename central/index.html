@@ -227,7 +227,9 @@ async function atualiza(){
   $("pCam").innerHTML = e.imprimindo && e.restante != null ? `falta <b>${hm(e.restante)}</b>, termina às <b>${relogio(e.agora+e.restante)}</b>` : "";
   for (const n of cams){
     const t = e.imagens[n], av = $("av-"+n), idade = t ? e.agora - t : null;
+    const sd = (e.saude || {})[n === "bico" ? "frente" : n];
     if (idade == null || idade > 15){ av.style.display = "block"; av.textContent = idade == null ? "sem imagem" : `câmera parada há ${hm(idade)}`; }
+    else if (sd && !sd.ok){ av.style.display = "block"; av.textContent = "câmera " + sd.motivo; }
     else av.style.display = "none";
   }
   $("log").textContent = (e.log||[]).join("\n") || "sem registro";

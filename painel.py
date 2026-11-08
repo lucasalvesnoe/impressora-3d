@@ -24,6 +24,18 @@ def yolo(im):
         cv2.putText(out, f"{n} {float(b.conf):.2f}", (x0, max(20, y0 - 8)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
     return out, nomes
 ref = None; zb = None
+import json
+saude_ant = {}
+def saude(nome, im):
+    """brilho, nitidez e se a imagem congelou (macOS pausa a Continuity Camera e repete um quadro borrado)."""
+    if im is None: return {"ok": False, "motivo": "sem imagem"}
+    g = cv2.cvtColor(cv2.resize(im, (320, int(320 * im.shape[0] / im.shape[1]))), cv2.COLOR_BGR2GRAY)
+    brilho, nitidez = float(g.mean()), float(cv2.Laplacian(g, cv2.CV_64F).var())
+    ant = saude_ant.get(nome); saude_ant[nome] = g
+    mexeu = None if ant is None or ant.shape != g.shape else float(np.abs(ant.astype(float) - g).mean())
+    motivo = "escuro (acenda a luz)" if brilho < 20 else "borrada ou pausada" if nitidez < 15 else None
+    return {"ok": motivo is None, "motivo": motivo, "brilho": round(brilho, 1), "nitidez": round(nitidez, 1), "mudanca": mexeu}
+congelado = {}
 while True:
     frente, cima, bico = le("latest_full.jpg"), le("cam2/cam2.jpg"), le("bico.jpg")
     zc = None
@@ -43,6 +55,13 @@ while True:
             zb = new if zb is None else (zb if np.abs(new - zb).max() < 1.5 * s else 0.9 * zb + 0.1 * new)
         if zb is not None:
             a, b, c2, dd = [int(v) for v in zb]; zc = cima[max(0, b):min(h, dd), max(0, a):min(w, c2)]
+    try:
+        sd = {"frente": saude("frente", frente), "cima": saude("cima", cima)}
+        for k, v in sd.items():
+            congelado[k] = congelado.get(k, 0) + 1 if v.get("mudanca") == 0.0 else 0
+            if congelado[k] > 10 and v["ok"]: v.update(ok=False, motivo="imagem congelada")
+        open("cams.json.tmp", "w").write(json.dumps(sd)); os.replace("cams.json.tmp", "cams.json")
+    except Exception: pass
     fy, fn = yolo(frente); cy_, cn = yolo(cima)
     A = rotulo(caixa(fy, 640, 360), "FRENTE normal + IA " + ",".join(sorted(set(fn)))[:30])
     B = rotulo(caixa(bico, 640, 360), "FRENTE zoom (bico)")
