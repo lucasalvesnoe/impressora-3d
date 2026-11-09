@@ -2,6 +2,34 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versão em [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.0] — 2026-11-08
+
+### Adicionado
+- Central: barra "Câmeras" para ligar e desligar câmeras. As três fixas (frente, zoom do bico, cima)
+  aparecem ou somem na página, com a escolha guardada no navegador. As câmeras de vídeo do Mac
+  (FaceTime, iPhone por Continuidade, Visualização da Mesa) são listadas pelo AVFoundation e, quando
+  ligadas, abrem um `ffmpeg` que grava um quadro por segundo em `cams/<id>.jpg`; desligar encerra o
+  processo. As ligadas ficam em `central/cameras_ativas.json` e reabrem quando a central reinicia
+  (`central/cameras.py`, rotas `GET /api/cameras`, `POST /api/cameras` e `GET /img/dev/<id>`).
+- Aba Modelos: arquivos baixados (3MF, STL, OBJ) com miniatura e visualizador 3D com medidas e
+  verificação de tamanho da mesa; ideias planejadas com capa e conceitos 3D modelados em `criar/`.
+- `docs/CAMERAS.md`: pesquisa de fazer ou comprar para três câmeras próprias (bico, mesa, alto), com
+  suportes prontos para baixar, câmeras indicadas e preços de referência.
+- `cameras.json`: escolha da fonte de cada câmera (câmera do Mac pelo índice, iPhone por Continuidade
+  ou página `cam2`).
+
+### Corrigido
+- Central avisa câmera escura, borrada ou congelada e esconde a câmera sem imagem.
+
+### Alterado
+- Imagens reduzidas (`web_*.jpg`) para a central acessada pela internet; voz padrão Rick.
+
+### Por que
+- A câmera é identificada pelo nome, não pelo índice: o índice do AVFoundation muda quando um
+  iPhone conecta ou desconecta.
+- Ligar câmera é `POST` e segue o mesmo controle de acesso da página (cookie com o token pela
+  internet), porque abre um processo no Mac.
+
 ## [0.1.0] — 2026-11-08
 
 Primeira versão. Montada em uma tarde, operando uma Creality Ender-3 de verdade pelo USB, com o

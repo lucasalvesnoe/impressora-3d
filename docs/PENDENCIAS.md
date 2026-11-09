@@ -11,7 +11,11 @@
    usar brim largo.
 5. `zoom.py` e `painel.py` acham o cabeçote pelo triângulo amarelo de aviso; em outra impressora o
    recorte precisa de outra referência.
-6. Caminhos fixos que ainda dependem da máquina: venv com OpenCV e ultralytics, `~/.fish-audio/key`.
+6. Câmeras próprias da impressora (bico, mesa, alto) para não depender do iPhone nem do Mac: opções em
+   `docs/CAMERAS.md`, aguardando a compra.
+7. Queda do USB no meio da impressão (cabo solto ao mover o Mac) mata o envio. Retomada hoje é manual;
+   automatizar a partir da última linha enviada, com o bico 0,3 mm mais alto.
+8. Caminhos fixos que ainda dependem da máquina: venv com OpenCV e ultralytics, `~/.fish-audio/key`.
 
 ## Resolvidas
 - Primeira camada esmagada (peça presa na mesa): bico 0,05 mm mais alto no início. 2026-11-08.

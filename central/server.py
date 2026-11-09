@@ -3,9 +3,9 @@
 Roda da pasta impressora-3d:  python3 central/server.py   ->  http://localhost:8090
 Só lê arquivos (progresso.txt, status.json, imagens, gcode, stl). Nunca abre a porta serial.
 """
-import json, os, re, subprocess, sys, time
+import json, os, re, subprocess, sys, threading, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import toolpath, biblioteca
+import toolpath, biblioteca, cameras
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -232,6 +232,11 @@ class H(BaseHTTPRequestHandler):
                 return self.envia(open(caminho("central" + rota), "rb").read(), "text/javascript; charset=utf-8")
             if rota == "/api/estado":
                 return self.envia(json.dumps(estado()).encode(), "application/json")
+            if rota == "/api/cameras":
+                return self.envia(json.dumps(cameras.estado(), ensure_ascii=False).encode(), "application/json")
+            if rota.startswith("/img/dev/"):
+                arq = cameras.imagem(rota[9:])
+                return self.envia(open(arq, "rb").read(), "image/jpeg") if arq else self.envia(b"", "text/plain", 404)
             if rota == "/api/fila":
                 return self.envia(json.dumps(fila()).encode(), "application/json")
             if rota.startswith("/img/") and rota[5:] in IMAGENS:
@@ -278,8 +283,25 @@ class H(BaseHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError):
             pass
 
+    def do_POST(self):
+        """POST /api/cameras com {"id": "...", "ligar": true|false}. Exige o mesmo acesso do GET (cookie pela internet)."""
+        if self.autorizado() is not True:
+            return self.envia(b"acesso negado", "text/plain", 403)
+        if self.path.split("?")[0] != "/api/cameras":
+            return self.envia(b"nao achei", "text/plain", 404)
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            pedido = json.loads(self.rfile.read(min(n, 4096)) or b"{}")
+            id_ = str(pedido.get("id", ""))
+            erro = cameras.ligar(id_) if pedido.get("ligar") else cameras.desligar(id_)
+            self.envia(json.dumps({"ok": not erro, "erro": erro}, ensure_ascii=False).encode(), "application/json",
+                       200 if not erro else 404)
+        except (ValueError, AttributeError):
+            self.envia(b"pedido invalido", "text/plain", 400)
+
 
 if __name__ == "__main__":
     os.chdir(RAIZ)
+    threading.Thread(target=cameras.restaura, daemon=True).start()
     print(f"central em http://localhost:{PORTA}", flush=True)
     ThreadingHTTPServer(("0.0.0.0", PORTA), H).serve_forever()

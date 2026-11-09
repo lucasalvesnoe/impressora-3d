@@ -28,5 +28,20 @@
   "nome": "Cobrinha articulada",
   "stl": ".cache/covra.stl",
   "cor": "#f2efe6"
+ },
+ "gyro_z": {
+  "nome": "Giroscópio fidget",
+  "stl": ".cache/gyro.stl",
+  "cor": "#f2efe6"
+ },
+ "gyro_retoma": {
+  "nome": "Giroscópio fidget",
+  "stl": ".cache/gyro.stl",
+  "cor": "#f2efe6"
+ },
+ "gyro_retoma2": {
+  "nome": "Giroscópio fidget",
+  "stl": ".cache/gyro.stl",
+  "cor": "#f2efe6"
  }
 }

@@ -29,3 +29,5 @@ cams.json.tmp
 web_*.jpg
 .cache/
 central/capas/
+cams/
+central/cameras_ativas.json
