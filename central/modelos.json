@@ -135,5 +135,20 @@
     "retoma_de": "baleia_vader.gcode",
     "deslocamento": 1441,
     "inicio_original": 1794279519.88
+  },
+  "ralo_z.gcode": {
+    "nome": "Ralo de pia",
+    "stl": "modelos/ralo/ralo.stl",
+    "cor": "#222222"
+  },
+  "emociones_carimbos_z.gcode": {
+    "nome": "Emociones: 5 carimbos",
+    "stl": "modelos/emociones/carimbos.stl",
+    "cor": "#222222"
+  },
+  "emociones_dado_z.gcode": {
+    "nome": "Emociones: dado 53 mm",
+    "stl": "modelos/emociones/dado.stl",
+    "cor": "#222222"
   }
 }

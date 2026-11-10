@@ -2,6 +2,21 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versão em [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.4.0] — 2026-11-10
+
+### Adicionado
+- `scripts/link_fixo.py`: mantém uma nota "Observatório" no app Notas com o link atual da central pelo
+  túnel. O túnel rápido do Cloudflare muda de endereço a cada reinício, e o link precisava ser procurado
+  na conversa; a nota, sincronizada pelo iCloud, fica disponível em qualquer aparelho e em qualquer rede.
+  Com `--vigia`, o script confere o endereço a cada 60 s e reescreve a nota quando ele muda. O token
+  chega ao `osascript` pela entrada padrão e nunca aparece na linha de comando.
+- Modelos cadastrados na central: ralo de pia e o conjunto "Emociones" (cinco carimbos para massinha e um
+  dado), reorganizados para caber na mesa de 220 mm sem redução de tamanho.
+
+### Por que
+- A nota traz apenas o link pelo túnel. O endereço `.local` foi retirado porque só resolve na mesma rede
+  do Mac, e os aparelhos que abrem a central circulam entre redes diferentes.
+
 ## [0.3.0] — 2026-11-10
 
 ### Adicionado

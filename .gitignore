@@ -46,3 +46,4 @@ fim_aviso.txt
 # dependências de terceiros baixadas localmente (cam-reverse, modelo do Obico) e binário compilado
 vendor/
 scripts/iphone_cabo
+central/link_fixo.out

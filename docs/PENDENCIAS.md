@@ -22,8 +22,14 @@
     limite de alerta em 0,65 e conferência visual de cada alerta.
 11. Brim é global quando várias peças são fatiadas juntas num STL único; peças planas ganharam brim sem
     precisar. Fatiar por objeto (3MF com configuração por peça) ou sem brim.
+12. Link da central: o `link_fixo.py --vigia` para quando o Mac reinicia; falta subir sozinho no login
+    (LaunchAgent). Endereço que nunca muda e sem token exige túnel nomeado com domínio próprio ou VPN
+    entre os aparelhos (Tailscale).
+13. Time-lapse: a câmera escolhida pode deixar de filmar a impressora no meio da impressão (troca de
+    cabo ou de aparelho). Detectar quadro sem a mesa e pausar a gravação daquela câmera.
 
 ## Resolvidas
+- Link da central perdido a cada reinício do túnel: nota "Observatório" atualizada sozinha. 2026-11-10.
 - Vista 3D com suportes triangulares (geometria simplificada para caber no túnel): formato TP2 fiel ao
   gcode. 2026-11-10.
 - Página da central lenta: vista 3D desenha sob demanda. 2026-11-10.
