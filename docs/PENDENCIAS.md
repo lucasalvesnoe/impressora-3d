@@ -16,8 +16,19 @@
 7. Queda do USB no meio da impressão (cabo solto ao mover o Mac) mata o envio. Retomada hoje é manual;
    automatizar a partir da última linha enviada, com o bico 0,3 mm mais alto.
 8. Caminhos fixos que ainda dependem da máquina: venv com OpenCV e ultralytics, `~/.fish-audio/key`.
+9. iPhone pelo cabo às vezes não reaparece na USB depois de trocado de aparelho (carrega, mas o Mac não
+   enumera). Em 10/11/2026 voltou sozinho depois de cerca de 40 min, sem causa identificada.
+10. Obico com falso positivo nas bordas curvas do quebra-cabeça e no preenchimento em grade (até 0,54);
+    limite de alerta em 0,65 e conferência visual de cada alerta.
+11. Brim é global quando várias peças são fatiadas juntas num STL único; peças planas ganharam brim sem
+    precisar. Fatiar por objeto (3MF com configuração por peça) ou sem brim.
 
 ## Resolvidas
+- Vista 3D com suportes triangulares (geometria simplificada para caber no túnel): formato TP2 fiel ao
+  gcode. 2026-11-10.
+- Página da central lenta: vista 3D desenha sob demanda. 2026-11-10.
+- Câmera esquecida quando o cabo solta: religação automática. 2026-11-10.
+- Bico encostando nos grampos dos cantos da mesa no início: referência de Z no centro. 2026-11-10.
 - Primeira camada esmagada (peça presa na mesa): bico 0,05 mm mais alto no início. 2026-11-08.
 - Envio morto aos 30 min pelo Monitor: envio com `nohup`, Monitor só lê o log. 2026-11-08.
 - Vista 3D piscando (dois desenhos no mesmo plano): trocada pelo caminho do gcode. 2026-11-08.

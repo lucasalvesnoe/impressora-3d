@@ -73,7 +73,48 @@ def segmentos(caminho):
     return dados
 
 
+# Formato compacto e fiel (TP2): todo filete do gcode, sem simplificar a geometria.
+# Antes (até 10/11/2026) os filetes curtos eram fundidos até 3 mm para caber no túnel; isso deixava
+# círculos pequenos (galhos do suporte orgânico, curvas finas) triangulares no 3D.
+# Agora o caminho vai em polilinhas: cada trecho contínuo (mesma camada, tipo, largura e altura) tem um
+# cabeçalho e os pontos seguintes vão como Int16 em centésimos de mm, mais o salto do índice do comando.
+#   cabeçalho: b"TP2\0", uint32 n_trechos, uint32 n_filetes
+#   trechos (32 bytes cada): float32 x0, y0, z, largura, altura; uint32 cmd0, n; uint8 tipo + 3 bytes
+#   depois: int16 x[n_filetes], int16 y[n_filetes], uint16 dcmd[n_filetes]
+_cache_tp2 = {}
+
+
+def compacto(caminho):
+    import struct, gzip
+    chave = (caminho, os.path.getmtime(caminho))
+    if chave in _cache_tp2:
+        return _cache_tp2[chave]
+    seg = array.array("f"); seg.frombytes(segmentos(caminho))
+    n = len(seg) // 9
+    trechos = bytearray(); xs = array.array("h"); ys = array.array("h"); dc = array.array("H")
+    nt = 0; i = 0
+    while i < n:
+        o = i * 9
+        z, w, h, t = seg[o+4], seg[o+5], seg[o+6], seg[o+7]
+        cmd = int(seg[o+8]); j = i
+        while j < n:
+            p = j * 9
+            if j > i and (seg[p] != seg[p-7] or seg[p+1] != seg[p-6] or seg[p+4] != z or seg[p+5] != w
+                          or seg[p+6] != h or seg[p+7] != t or not 0 <= int(seg[p+8]) - cmd <= 65535):
+                break
+            xs.append(round(seg[p+2] * 100)); ys.append(round(seg[p+3] * 100))
+            dc.append(int(seg[p+8]) - cmd if j > i else 0); cmd = int(seg[p+8]); j += 1
+        trechos += struct.pack("<5f2I4B", seg[o], seg[o+1], z, w, h, int(seg[o+8]), j - i, int(t), 0, 0, 0)
+        nt += 1; i = j
+    corpo = b"TP2\0" + struct.pack("<2I", nt, n) + bytes(trechos) + xs.tobytes() + ys.tobytes() + dc.tobytes()
+    dados = gzip.compress(corpo, 6)
+    _cache_tp2.clear(); _cache_tp2[chave] = dados
+    return dados
+
+
 if __name__ == "__main__":
     import sys, time
     t = time.time(); d = segmentos(sys.argv[1])
     print(len(d) // 36, "segmentos", round(time.time() - t, 2), "s", len(d) // 1024, "KB")
+    t = time.time(); c = compacto(sys.argv[1])
+    print("TP2 gzip", len(c) // 1024, "KB", round(time.time() - t, 2), "s")

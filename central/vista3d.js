@@ -27,6 +27,7 @@ export function criaVista(box, aoMudar) {
   const cam = new THREE.PerspectiveCamera(35, 1, 1, 3000);
   const ctl = new OrbitControls(cam, renderer.domElement);
   ctl.enableDamping = true; ctl.dampingFactor = 0.08; ctl.maxPolarAngle = Math.PI * 0.495;
+  ctl.zoomSpeed = 2.5; ctl.zoomToCursor = true;   // pinça no celular amplia rápido e onde o dedo está
 
   const sol = new THREE.DirectionalLight(0xffffff, 1.4);
   sol.position.set(-80, 160, 120); sol.castShadow = true;
@@ -74,7 +75,8 @@ export function criaVista(box, aoMudar) {
   const matFilete = new THREE.MeshStandardMaterial({ roughness: 0.42, metalness: 0.0, clippingPlanes: [], clipShadows: true, side: THREE.DoubleSide });
   const matCamada = new THREE.MeshStandardMaterial({ roughness: 0.35, emissive: 0xff7a1a, emissiveIntensity: 0.35, clippingPlanes: [], clipShadows: true, side: THREE.DoubleSide });
 
-  function ajusta() { const w = box.clientWidth, h = box.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  let sujo = true;   // precisa redesenhar (ver o laço anima)
+  function ajusta() { const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); sujo = true; }
   addEventListener("resize", ajusta); ajusta();
 
   function corDe(tipo, out) {
@@ -107,9 +109,34 @@ export function criaVista(box, aoMudar) {
     if (alvo.instanceColor) alvo.instanceColor.needsUpdate = true;
   }
 
+  // TP2 (central/toolpath.py, compacto): polilinhas fiéis ao gcode -> 9 floats por filete
+  function decodifica(buf) {
+    const u8 = new Uint8Array(buf);
+    if (!(u8[0] === 84 && u8[1] === 80 && u8[2] === 50 && u8[3] === 0)) return new Float32Array(buf);
+    const dv = new DataView(buf), nt = dv.getUint32(4, true), n = dv.getUint32(8, true);
+    const base = 12 + nt * 32;
+    const xs = new Int16Array(buf, base, n), ys = new Int16Array(buf, base + n * 2, n), dc = new Uint16Array(buf, base + n * 4, n);
+    const seg = new Float32Array(n * 9);
+    let k = 0;
+    for (let r = 0; r < nt; r++) {
+      const o = 12 + r * 32;
+      let x = dv.getFloat32(o, true), y = dv.getFloat32(o + 4, true);
+      const z = dv.getFloat32(o + 8, true), w = dv.getFloat32(o + 12, true), h = dv.getFloat32(o + 16, true);
+      let cmd = dv.getUint32(o + 20, true); const cnt = dv.getUint32(o + 24, true), t = dv.getUint8(o + 28);
+      for (let j = 0; j < cnt; j++, k++) {
+        const x1 = xs[k] / 100, y1 = ys[k] / 100; cmd += dc[k];
+        const p = k * 9;
+        seg[p] = x; seg[p + 1] = y; seg[p + 2] = x1; seg[p + 3] = y1; seg[p + 4] = z;
+        seg[p + 5] = w; seg[p + 6] = h; seg[p + 7] = t; seg[p + 8] = cmd;
+        x = x1; y = y1;
+      }
+    }
+    return seg;
+  }
+
   function monta(buf) {
     [malha, camadaMalha, fantasma].forEach(o => { if (o) { cena.remove(o); o.geometry !== geoFilete && o.geometry.dispose(); } });
-    const bruto = new Float32Array(buf);
+    const bruto = decodifica(buf);
     let manter = 0; for (let i = 0; i < bruto.length / 9; i++) if (bruto[i * 9 + 7] !== 0) manter++;
     const seg = new Float32Array(manter * 9);
     for (let i = 0, k = 0; i < bruto.length / 9; i++) if (bruto[i * 9 + 7] !== 0) { seg.set(bruto.subarray(i * 9, i * 9 + 9), k * 9); k++; }
@@ -215,6 +242,7 @@ export function criaVista(box, aoMudar) {
   }
 
   function aplica() {
+    sujo = true; renderer.shadowMap.needsUpdate = true;
     if (!D) return;
     novoAlvo();
     const planos = corte ? [plano] : [];
@@ -245,15 +273,28 @@ export function criaVista(box, aoMudar) {
     else if (tipo === "frente") cam.position.set(c.x, c.y + r * 0.3, c.z + r * 2.6);
     else cam.position.set(c.x + r * 1.5, c.y + r * 1.35, c.z + r * 1.9);
     sol.target.position.copy(c); sol.position.set(c.x - 80, 160, c.z + 120);
-    ctl.update();
+    ctl.update(); sujo = true; renderer.shadowMap.needsUpdate = true;
   }
 
-  let tAnt = performance.now();
+  // Desenha só quando precisa (antes: 60 quadros/s sempre, até com a aba escondida, e com 1 milhão de
+  // filetes isso travava a página). Mexer na câmera, chegar progresso novo ou mudar opção marca "sujo";
+  // o bico ao vivo anda a FPS_VIVO enquanto ainda está atrás do real; a sombra se recalcula a cada SOMBRA_MS.
+  const FPS_VIVO = 12, SOMBRA_MS = 2000;
+  let ultimoVivo = 0, sombraEm = 0, estavaVisivel = false;
+  renderer.shadowMap.autoUpdate = false;
+  ctl.addEventListener("change", () => { sujo = true; });
+  document.addEventListener("visibilitychange", () => { sujo = true; });
   (function anima(t) {
     requestAnimationFrame(anima);
-    const dt = Math.min(0.1, ((t ?? performance.now()) - tAnt) / 1000); tAnt = t ?? performance.now();
-    quadroAoVivo(dt);
-    ctl.update(); renderer.render(cena, cam);
+    t = t ?? performance.now();
+    if (document.hidden || renderer.domElement.offsetParent === null) { estavaVisivel = false; return; }   // aba escondida: nada
+    if (!estavaVisivel) { estavaVisivel = true; ajusta(); sujo = true; }   // voltou para a aba: acerta o tamanho
+    ctl.update();
+    const vivo = D && aoVivo && cabeca < alvoD && t - ultimoVivo >= 1000 / FPS_VIVO;
+    if (vivo || (D && aoVivo && camadaViva < 0)) { quadroAoVivo(Math.min(0.2, (t - (ultimoVivo || t)) / 1000)); ultimoVivo = t; sujo = true; }
+    if (!sujo) return;
+    if (t - sombraEm > SOMBRA_MS) { renderer.shadowMap.needsUpdate = true; sombraEm = t; }
+    renderer.render(cena, cam); sujo = false;
   })();
 
   let arquivo = null;

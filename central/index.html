@@ -60,6 +60,14 @@
   .cams{grid-column:1 / -1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
   .cam img{width:100%;height:auto;max-height:78vh;object-fit:contain;background:#000;display:block;cursor:zoom-in}
   .cam .aviso{position:absolute;top:44px;left:10px;right:10px;background:rgba(239,90,90,.9);color:#fff;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;display:none}
+  .videos{min-width:0}
+  .zoomcam .janela{position:relative;overflow:hidden;background:#000;width:100%}
+  .zoomcam .janela img{position:absolute;max-width:none !important;max-height:none !important;height:auto;cursor:zoom-in}
+  /* palco: a coluna das câmeras não empurra a altura (contain:size); quem manda é o card do 3D */
+  .palco{display:flex;flex-direction:column;gap:16px;contain:size}
+  .palco:empty{display:none}
+  .palco .cam{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+  .palco .cam img,.palco .cam canvas{flex:1 1 0;min-height:0;width:100%;height:100%;max-height:none;object-fit:contain;background:#000;display:block;cursor:zoom-in}  .painelbaixo{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
   .progresso{grid-column:1 / -1;padding:14px 18px}
   .trilho{height:14px;background:#262b31;border-radius:99px;overflow:hidden}
   .trilho i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),#ffb86b);width:0;transition:width .6s}
@@ -80,6 +88,9 @@
   .mtopo{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
   .mtopo h2{margin:0;font-size:18px}
   .mtopo span{color:var(--mut);font-size:13px}
+  .mtopo{flex-wrap:wrap}
+  .mordem{margin-left:auto;background:#1c1f23;color:inherit;border:1px solid #3a4250;border-radius:6px;padding:4px 8px;font-size:13px}
+  .mtempo{color:#ffb070;font-weight:600}
   #mGrade{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden;cursor:pointer;text-align:left;color:var(--txt);font:inherit}
   .mcard:hover{border-color:#4a525c}
@@ -113,9 +124,11 @@
     #abaModelos{padding:12px 16px}
     #mvBox{height:320px}
     main{grid-template-columns:1fr;padding:12px 16px}
-    .cams,.baixo{grid-template-columns:1fr}
-    .cams{order:-1}
-    .camsbar{order:-1}
+    .cams,.baixo,.painelbaixo{grid-template-columns:1fr}
+    .videos{order:-1}
+    .palco{contain:none}
+    .palco .cam{flex:none}
+    .palco .cam img,.palco .cam canvas{flex:none;height:auto}
     main > section.card:first-child{order:-2}
     #vista3d{height:320px}
     .lcd .lin{font-size:24px}
@@ -132,11 +145,13 @@
 </header>
 <section id="abaModelos">
   <div class="card mviewer"><div class="mvcab"><b id="mvTitulo"></b><span id="mvInfo"></span></div><div id="mvBox"></div></div>
-  <div class="mtopo"><h2>Modelos baixados</h2><span id="mTotal"></span><span>Downloads e pasta modelos/ · toque para ver em 3D</span></div>
+  <div class="mtopo"><h2>Modelos baixados</h2><span id="mTotal"></span><span>Downloads e pasta modelos/ · toque para ver em 3D</span>
+    <select id="mOrdem" class="mordem"><option value="data">mais recentes</option><option value="rapido">mais rápido primeiro</option><option value="demorado">mais demorado primeiro</option></select></div>
   <div id="mGrade"></div>
   <div id="mIdeias"></div>
 </section>
 <main id="abaImp">
+  <section class="card camsbar" id="camsbar"><h2>Câmeras</h2><span id="chipsFixas"></span><span id="chipsDev"></span><small id="camsMsg"></small></section>
   <section class="card">
     <h2>Caminho do bico em 3D (cada filete do gcode)</h2>
     <div id="vista3d">
@@ -157,7 +172,21 @@
     </div>
   </section>
 
-  <div class="direita">
+  <!-- palco: câmera principal em cima e o zoom fixo dela embaixo, na mesma altura do 3D ao lado -->
+  <div class="direita videos palco" id="palco"></div>
+
+  <div class="cams" id="camsGrade">
+    <section class="card cam"><h2>Frente</h2><div class="aviso" id="av-frente"></div><img id="img-frente" alt="câmera da frente"></section>
+    <section class="card cam"><h2>Zoom do bico</h2><div class="aviso" id="av-bico"></div><img id="img-bico" alt="zoom do bico"></section>
+    <section class="card cam"><h2>Cima</h2><div class="aviso" id="av-cima"></div><img id="img-cima" alt="câmera de cima"></section>
+  </div>
+
+  <section class="card progresso">
+    <div class="trilho"><i id="barra"></i></div>
+    <div class="info"><span id="pInfo">...</span><span id="pCam">...</span></div>
+  </section>
+
+  <div class="painelbaixo">
     <section class="card">
       <h2>Display da impressora</h2>
       <div class="lcd">
@@ -183,17 +212,6 @@
     </section>
   </div>
 
-  <section class="card progresso">
-    <div class="trilho"><i id="barra"></i></div>
-    <div class="info"><span id="pInfo">...</span><span id="pCam">...</span></div>
-  </section>
-
-  <section class="card camsbar" id="camsbar"><h2>Câmeras</h2><span id="chipsFixas"></span><span id="chipsDev"></span><small id="camsMsg"></small></section>
-  <div class="cams" id="camsGrade">
-    <section class="card cam"><h2>Frente</h2><div class="aviso" id="av-frente"></div><img id="img-frente" alt="câmera da frente"></section>
-    <section class="card cam"><h2>Zoom do bico</h2><div class="aviso" id="av-bico"></div><img id="img-bico" alt="zoom do bico"></section>
-    <section class="card cam"><h2>Cima</h2><div class="aviso" id="av-cima"></div><img id="img-cima" alt="câmera de cima"></section>
-  </div>
 
   <div class="baixo">
     <section class="card"><h2>Arquivos prontos</h2><ul class="fila" id="fila"></ul></section>
@@ -293,15 +311,28 @@ async function camerasDev(){
   $("chipsDev").innerHTML = devs.map(d => `<button data-d="${d.id}" class="${d.ativa ? "on" : ""}" title="${d.erro ? esc(d.erro) : "câmera do Mac"}">${esc(d.nome)}</button>`).join(" ");
   document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => alterna(b));
   const ativas = devs.filter(d => d.ativa);
+  // principal = a primeira ligada que tem zoom fixo (cams_zoom.json); vai para o palco ao lado do 3D
+  const principal = ativas.find(d => d.zoom) || ativas[0];
   for (const d of ativas){
-    if ($("dev-" + d.id)) continue;
-    const s = document.createElement("section");
-    s.className = "card cam"; s.id = "dev-" + d.id;
-    s.innerHTML = `<h2>${esc(d.nome)}</h2><div class="aviso" style="display:block">abrindo a câmera...</div><img alt="${esc(d.nome)}">`;
-    s.querySelector("img").addEventListener("click", amplia);
-    $("camsGrade").appendChild(s);
+    let s = $("dev-" + d.id), z = $("dev-" + d.id + "-zoom");
+    if (!s){
+      s = document.createElement("section");
+      s.className = "card cam"; s.id = "dev-" + d.id;
+      s.innerHTML = `<h2>${esc(d.nome)}</h2><div class="aviso" style="display:block">abrindo a câmera...</div><img alt="${esc(d.nome)}">`;
+      s.querySelector("img").addEventListener("click", amplia);
+    }
+    if (d.zoom && !z){
+      // o recorte é desenhado num canvas (object-fit: contain), assim cabe em qualquer altura sem distorcer
+      z = document.createElement("section");
+      z.className = "card cam zoomcam"; z.id = "dev-" + d.id + "-zoom"; z.dataset.zoom = JSON.stringify(d.zoom);
+      z.innerHTML = `<h2>Zoom fixo: ${esc(d.nome)}</h2><div class="aviso"></div><canvas aria-label="zoom ${esc(d.nome)}"></canvas>`;
+      z.querySelector("canvas").addEventListener("click", () => { const src = s.querySelector("img").src; if (src){ $("grande").style.display = "grid"; $("grande").querySelector("img").src = src; } });
+    }
+    const destino = d === principal ? $("palco") : $("camsGrade");
+    if (s.parentElement !== destino) destino.appendChild(s);
+    if (z && z.previousElementSibling !== s) s.after(z);
   }
-  document.querySelectorAll("#camsGrade [id^=dev-]").forEach(s => { if (!ativas.some(d => "dev-" + d.id === s.id)) s.remove(); });
+  document.querySelectorAll("#camsGrade [id^=dev-], #palco [id^=dev-]").forEach(s => { if (!ativas.some(d => "dev-" + d.id === s.id || "dev-" + d.id + "-zoom" === s.id)) s.remove(); });
   const erros = devs.filter(d => d.erro).map(d => `${d.nome}: ${d.erro}`);
   $("camsMsg").textContent = erros.length ? erros.join(" · ") : (devs.length ? "toque para ligar ou desligar" : "nenhuma câmera do Mac disponível");
 }
@@ -320,7 +351,14 @@ function trocaDev(){
     const s = $("dev-" + d.id); if (!s || pendDev[d.id]) continue;
     pendDev[d.id] = true;
     const img = new Image();
-    img.onload = () => { s.querySelector("img").src = img.src; s.querySelector(".aviso").style.display = "none"; pendDev[d.id] = false; };
+    img.onload = () => {
+      s.querySelector("img").src = img.src; s.querySelector(".aviso").style.display = "none"; pendDev[d.id] = false;
+      const z = $("dev-" + d.id + "-zoom"); if (!z) return;
+      const [a, b, c, e] = JSON.parse(z.dataset.zoom), cv = z.querySelector("canvas");
+      const W = img.naturalWidth, H = img.naturalHeight, sw = Math.round((c - a) * W), sh = Math.round((e - b) * H);
+      if (cv.width !== sw || cv.height !== sh){ cv.width = sw; cv.height = sh; }
+      cv.getContext("2d").drawImage(img, a * W, b * H, sw, sh, 0, 0, sw, sh);
+    };
     img.onerror = () => { pendDev[d.id] = false; };
     img.src = `/img/dev/${d.id}?t=${Date.now()}`;
   }

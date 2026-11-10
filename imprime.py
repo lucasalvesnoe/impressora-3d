@@ -4,6 +4,8 @@ Grava:
   progresso.txt  "i/total linha"  (lido por painel.py, prog.sh e central)
   status.json    arquivo, inicio, temperaturas reais (M105 a cada 5 s), fim
   imprime.log    FIM ou ERRO
+Pausa: criar o arquivo PAUSA na pasta. O envio para na hora, recolhe 2 mm de filamento e sobe o bico 10 mm
+(sem mexer em X/Y; aquecimento mantido). Supõe extrusão relativa (M83), que é o que o PrusaSlicer gera. Apagar PAUSA (ou mover para a Lixeira) retoma do mesmo ponto.
 Uso: imprime.py arquivo.gcode
 """
 import json, re, serial, sys, time, os
@@ -37,6 +39,25 @@ def le_temp(r):
     grava()
 
 
+ARQ_PAUSA = "PAUSA"
+SOBE_PAUSA = 10
+
+
+def pausa_se_pedido():
+    if not os.path.exists(ARQ_PAUSA):
+        return
+    for c in ("M400", "G1 E-2 F2400", "G91", f"G1 Z{SOBE_PAUSA} F600", "G90", "M83"):
+        manda(c)
+    status["estado"] = "pausado"; grava()
+    print("PAUSA", flush=True); open("imprime.log", "a").write("PAUSA\n")
+    while os.path.exists(ARQ_PAUSA):
+        manda("M105"); time.sleep(5)
+    for c in ("G91", f"G1 Z-{SOBE_PAUSA} F600", "G90", "M83", "G1 E2 F2400"):
+        manda(c)
+    status["estado"] = "imprimindo"; grava()
+    print("RETOMA", flush=True); open("imprime.log", "a").write("RETOMA\n")
+
+
 def manda(cmd):
     s.write((cmd + "\n").encode())
     while True:
@@ -55,6 +76,7 @@ time.sleep(3); s.reset_input_buffer()
 grava()
 ultimo = 0.0
 for i, l in enumerate(linhas, 1):
+    pausa_se_pedido()
     manda(l)
     open("progresso.txt", "w").write(f"{i}/{len(linhas)} {l}\n")
     if time.time() - ultimo > INTERVALO_TEMP:

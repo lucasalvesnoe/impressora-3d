@@ -1,47 +1,139 @@
 {
- "apito_z.gcode": {
-  "nome": "Apito",
-  "stl": "modelos/novos/apito.stl",
-  "cor": "#d9d9d9"
- },
- "dumpling_base_z.gcode": {
-  "nome": "Dumpling: cesto (base)",
-  "stl": "modelos/novos/dumpling_base.stl",
-  "cor": "#8a5a3b"
- },
- "dumpling_topo_z.gcode": {
-  "nome": "Dumpling: topo",
-  "stl": "modelos/novos/dumpling_topo.stl",
-  "cor": "#f2efe6"
- },
- "gato.gcode": {
-  "nome": "Gato",
-  "stl": "modelos/gato/gato.stl",
-  "cor": "#d9d9d9"
- },
- "croissant.gcode": {
-  "nome": "Croissant",
-  "stl": "modelos/croissant/croissant_fidget_toy.stl",
-  "cor": "#e0b060"
- },
- "covra_z.gcode": {
-  "nome": "Cobrinha articulada",
-  "stl": ".cache/covra.stl",
-  "cor": "#f2efe6"
- },
- "gyro_z": {
-  "nome": "Giroscópio fidget",
-  "stl": ".cache/gyro.stl",
-  "cor": "#f2efe6"
- },
- "gyro_retoma": {
-  "nome": "Giroscópio fidget",
-  "stl": ".cache/gyro.stl",
-  "cor": "#f2efe6"
- },
- "gyro_retoma2": {
-  "nome": "Giroscópio fidget",
-  "stl": ".cache/gyro.stl",
-  "cor": "#f2efe6"
- }
+  "apito_z.gcode": {
+    "nome": "Apito",
+    "stl": "modelos/novos/apito.stl",
+    "cor": "#d9d9d9"
+  },
+  "dumpling_base_z.gcode": {
+    "nome": "Dumpling: cesto (base)",
+    "stl": "modelos/novos/dumpling_base.stl",
+    "cor": "#8a5a3b"
+  },
+  "dumpling_topo_z.gcode": {
+    "nome": "Dumpling: topo",
+    "stl": "modelos/novos/dumpling_topo.stl",
+    "cor": "#f2efe6"
+  },
+  "gato.gcode": {
+    "nome": "Gato",
+    "stl": "modelos/gato/gato.stl",
+    "cor": "#d9d9d9"
+  },
+  "croissant.gcode": {
+    "nome": "Croissant",
+    "stl": "modelos/croissant/croissant_fidget_toy.stl",
+    "cor": "#e0b060"
+  },
+  "covra_z.gcode": {
+    "nome": "Cobrinha articulada",
+    "stl": ".cache/covra.stl",
+    "cor": "#f2efe6"
+  },
+  "gyro_z.gcode": {
+    "nome": "Giroscópio fidget",
+    "stl": ".cache/gyro.stl",
+    "cor": "#f2efe6"
+  },
+  "gyro_retoma.gcode": {
+    "nome": "Giroscópio fidget",
+    "stl": ".cache/gyro.stl",
+    "cor": "#f2efe6"
+  },
+  "gyro_retoma2.gcode": {
+    "nome": "Giroscópio fidget",
+    "stl": ".cache/gyro.stl",
+    "cor": "#f2efe6"
+  },
+  "chaves_z.gcode": {
+    "nome": "Chaves da Celina",
+    "stl": "modelos/celina/chaves_mesa.stl",
+    "cor": "#f2efe6"
+  },
+  "noite_z.gcode": {
+    "nome": "Chaves da Celina + elefante",
+    "stl": "modelos/celina/noite.stl",
+    "cor": "#f2efe6"
+  },
+  "noite_retoma.gcode": {
+    "nome": "Chaves da Celina + elefante",
+    "stl": "modelos/celina/noite.stl",
+    "cor": "#f2efe6",
+    "retoma_de": "noite_z.gcode",
+    "deslocamento": 186699,
+    "inicio_original": 1794193815.461109
+  },
+  "dino_z.gcode": {
+    "nome": "Dino básico",
+    "stl": "modelos/novos/dino.stl",
+    "cor": "#5aa05a"
+  },
+  "dino_sup_z.gcode": {
+    "nome": "Dino básico (com suporte)",
+    "stl": "modelos/novos/dino.stl",
+    "cor": "#5aa05a"
+  },
+  "clips_z.gcode": {
+    "nome": "Mini clips + holder",
+    "stl": "modelos/clips/clips_mesa.stl",
+    "cor": "#f2efe6"
+  },
+  "clips_so_z.gcode": {
+    "nome": "Mini clips (7)",
+    "stl": "modelos/clips/so_clips.stl",
+    "cor": "#f2efe6"
+  },
+  "clips_so_retoma.gcode": {
+    "nome": "Mini clips (6)",
+    "stl": "modelos/clips/so_clips.stl",
+    "cor": "#f2efe6",
+    "retoma_de": "clips_so_z.gcode",
+    "deslocamento": 8092,
+    "inicio_original": 1794235700
+  },
+  "clips_retoma2.gcode": {
+    "nome": "Mini clips (6)",
+    "stl": "modelos/clips/so_clips.stl",
+    "cor": "#f2efe6",
+    "retoma_de": "clips_so_z.gcode",
+    "deslocamento": 150980,
+    "inicio_original": 1794235700
+  },
+  "clicky_z.gcode": {
+    "nome": "Clicky Clicker com tecla (caixa, clicker, tecla)",
+    "stl": "modelos/novos/clicky_keycap.stl",
+    "cor": "#f2efe6"
+  },
+  "flick_c_z.gcode": {
+    "nome": "Flick 3beden (3 rotores + 2 eixos)",
+    "stl": "modelos/novos/flick_canto.stl",
+    "cor": "#f2efe6"
+  },
+  "rotores.gcode": {
+    "nome": "Flick: 3 rotores (com suporte, faixa da frente)",
+    "stl": "modelos/novos/flick_rotores.stl",
+    "cor": "#f2efe6"
+  },
+  "rotores_dir.gcode": {
+    "nome": "Flick: rotor da direita (continuação)",
+    "stl": "modelos/novos/flick_rotores.stl",
+    "cor": "#f2efe6"
+  },
+  "rotores_fim.gcode": {
+    "nome": "Flick: rotor da direita (últimas camadas)",
+    "stl": "modelos/novos/flick_rotores.stl",
+    "cor": "#f2efe6"
+  },
+  "baleia_vader.gcode": {
+    "nome": "Baleia quebra-cabeça (8 peças) + mini Vader",
+    "stl": "modelos/noite/baleia_vader.stl",
+    "cor": "#1a1a1a"
+  },
+  "baleia_vader_r1.gcode": {
+    "nome": "Baleia + mini Vader (retomada após queda do USB)",
+    "stl": "modelos/noite/baleia_vader.stl",
+    "cor": "#1a1a1a",
+    "retoma_de": "baleia_vader.gcode",
+    "deslocamento": 1441,
+    "inicio_original": 1794279519.88
+  }
 }

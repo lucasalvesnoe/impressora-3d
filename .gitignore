@@ -31,3 +31,18 @@ web_*.jpg
 central/capas/
 cams/
 central/cameras_ativas.json
+timelapse/
+
+# saídas de cada impressão e do vigia (geradas em tempo de execução)
+imprime.out*
+imprime.log.*
+progresso.txt.*
+obico.json
+obico.out
+obico_roi*.json
+timelapse.out
+fim_aviso.txt
+
+# dependências de terceiros baixadas localmente (cam-reverse, modelo do Obico) e binário compilado
+vendor/
+scripts/iphone_cabo

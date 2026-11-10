@@ -8,6 +8,13 @@ const MESA = 220;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const kb = b => b > 1048576 ? (b / 1048576).toFixed(1) + " MB" : Math.round(b / 1024) + " KB";
+const hm = s => s >= 3600 ? `${Math.floor(s / 3600)}h${String(Math.round(s % 3600 / 60)).padStart(2, "0")}` : `${Math.max(1, Math.round(s / 60))} min`;
+const tempoTxt = m => m.tempo_s ? `<span class="mtempo">${hm(m.tempo_s)}</span>${m.filamento_m ? ` · ${m.filamento_m} m` : ""}` : (m.tempo_erro ? esc(m.tempo_erro) : "calculando tempo...");
+const ORDENS = {
+  data: (a, b) => b.data - a.data,
+  rapido: (a, b) => (a.tempo_s ?? Infinity) - (b.tempo_s ?? Infinity),
+  demorado: (a, b) => (b.tempo_s ?? -1) - (a.tempo_s ?? -1),
+};
 const dia = t => new Date(t * 1000).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 
 let viewer = null;
@@ -19,7 +26,7 @@ function criaViewer(box) {
   const cena = new THREE.Scene(); cena.background = new THREE.Color(0x14171b);
   cena.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture;
   const cam = new THREE.PerspectiveCamera(35, 1, 1, 3000);
-  const ctl = new OrbitControls(cam, r.domElement); ctl.enableDamping = true; ctl.autoRotate = true; ctl.autoRotateSpeed = 0.8;
+  const ctl = new OrbitControls(cam, r.domElement); ctl.enableDamping = true; ctl.autoRotate = true; ctl.autoRotateSpeed = 0.8; ctl.zoomSpeed = 2.5; ctl.zoomToCursor = true;
   const sol = new THREE.DirectionalLight(0xffffff, 1.3); sol.position.set(-80, 160, 120); cena.add(sol);
   cena.add(new THREE.HemisphereLight(0xdfe8ff, 0x20242a, 0.4));
   const mesa = new THREE.Mesh(new THREE.BoxGeometry(MESA, 2, MESA), new THREE.MeshStandardMaterial({ color: 0x1c1f23, roughness: 0.9 }));
@@ -29,7 +36,14 @@ function criaViewer(box) {
   const mat = new THREE.MeshStandardMaterial({ color: 0xff8a3d, roughness: 0.5, metalness: 0.05 });
   function ajusta() { const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
   addEventListener("resize", ajusta);
-  (function anima() { requestAnimationFrame(anima); ctl.update(); r.render(cena, cam); })();
+  // só desenha com o visualizador na tela (antes girava a 60 quadros/s mesmo na aba Impressão)
+  let visivel = false;
+  (function anima() {
+    requestAnimationFrame(anima);
+    if (document.hidden || r.domElement.offsetParent === null) { visivel = false; return; }
+    if (!visivel) { visivel = true; ajusta(); }
+    ctl.update(); r.render(cena, cam);
+  })();
   return {
     ajusta,
     mostra(geo) {
@@ -64,12 +78,21 @@ async function abre(m) {
   }
 }
 
+let ordem = "data";
+try { ordem = localStorage.getItem("mOrdem") || "data"; } catch {}
+
 export async function carregaModelos() {
-  const lista = await (await fetch("/api/modelos")).json();
+  const sel = $("mOrdem");
+  if (sel && !sel.dataset.ok) {
+    sel.dataset.ok = 1; sel.value = ordem;
+    sel.onchange = () => { ordem = sel.value; try { localStorage.setItem("mOrdem", ordem); } catch {} carregaModelos(); };
+  }
+  const lista = [...await (await fetch("/api/modelos")).json()].sort(ORDENS[ordem] || ORDENS.data);
   $("mGrade").innerHTML = lista.map((m, i) => `
     <button class="mcard" data-i="${i}">
       <div class="mthumb">${m.tem_miniatura ? `<img loading="lazy" src="/api/modelo/mini?id=${m.id}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'3D'}))">` : "<span>STL</span>"}</div>
       <div class="mnome">${esc(m.nome)}</div>
+      <div class="mmeta">${tempoTxt(m)}</div>
       <div class="mmeta">${dia(m.data)} · ${kb(m.tamanho)}</div>
     </button>`).join("");
   $("mTotal").textContent = `${lista.length} modelos`;

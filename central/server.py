@@ -140,9 +140,18 @@ def estado():
     if st.get("arquivo") and arquivo and os.path.basename(st["arquivo"]) != os.path.basename(arquivo):
         st = {}
     inicio = st.get("inicio") or inicio_processo()
+    # impressão retomada: o arquivo enviado é um pedaço do original; mapeia a linha de volta ao arquivo inteiro
+    meta0 = modelos().get(os.path.basename(arquivo or ""), {})
+    base, desloc = meta0.get("retoma_de"), meta0.get("deslocamento", 0)
+    if base:
+        arquivo = base
+        inicio = meta0.get("inicio_original") or inicio
     g = {}
     if arquivo and os.path.exists(caminho(arquivo)):
         g = analisa_gcode(arquivo)
+    if base and g:
+        i += desloc
+        total = len(g["z_por_cmd"])
     camada, z = (0, 0.0)
     if g and 0 < i <= len(g["z_por_cmd"]):
         camada, z = g["z_por_cmd"][i - 1]
@@ -165,7 +174,9 @@ def estado():
         "bico": st.get("bico"), "bico_alvo": st.get("bico_alvo") or g.get("bico_alvo"),
         "mesa": st.get("mesa"), "mesa_alvo": st.get("mesa_alvo") or g.get("mesa_alvo"),
         "temp_idade": (agora - st["temp_em"]) if st.get("temp_em") else None,
-        "imagens": {k: (os.path.getmtime(caminho(v)) if os.path.exists(caminho(v)) else None) for k, v in IMAGENS.items()},
+        # fixa que aponta para cams/<id>.jpg já aparece como câmera do Mac: não duplica
+        "imagens": {k: (os.path.getmtime(caminho(v)) if os.path.exists(caminho(v)) and not v.startswith("cams/") else None)
+                    for k, v in IMAGENS.items()},
         "log": registro(ativo, arquivo, inicio, i, total),
         "saude": ler_json("cams.json"),
         "agora": agora,
@@ -233,7 +244,9 @@ class H(BaseHTTPRequestHandler):
             if rota == "/api/estado":
                 return self.envia(json.dumps(estado()).encode(), "application/json")
             if rota == "/api/cameras":
-                return self.envia(json.dumps(cameras.estado(), ensure_ascii=False).encode(), "application/json")
+                zoom = ler_json("cams_zoom.json") or {}
+                lista = [{**c, "zoom": zoom.get(c["id"])} for c in cameras.estado()]
+                return self.envia(json.dumps(lista, ensure_ascii=False).encode(), "application/json")
             if rota.startswith("/img/dev/"):
                 arq = cameras.imagem(rota[9:])
                 return self.envia(open(arq, "rb").read(), "image/jpeg") if arq else self.envia(b"", "text/plain", 404)
@@ -268,7 +281,16 @@ class H(BaseHTTPRequestHandler):
                 from urllib.parse import parse_qs, urlparse
                 arq = os.path.basename(parse_qs(urlparse(self.path).query).get("a", [""])[0])
                 if arq.endswith(".gcode") and os.path.exists(caminho(arq)):
-                    return self.envia(toolpath.segmentos(caminho(arq)), "application/octet-stream")
+                    dado = toolpath.compacto(caminho(arq))   # TP2 já em gzip, geometria fiel
+                    if "gzip" in (self.headers.get("Accept-Encoding") or ""):
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/octet-stream")
+                        self.send_header("Content-Encoding", "gzip")
+                        self.send_header("Cache-Control", "no-store")
+                        self.send_header("Content-Length", str(len(dado)))
+                        self.end_headers(); self.wfile.write(dado); return
+                    import gzip
+                    return self.envia(gzip.decompress(dado), "application/octet-stream")
             if rota == "/modelo.stl":
                 arq = processo_ativo()
                 if not arq:
@@ -303,5 +325,11 @@ class H(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     os.chdir(RAIZ)
     threading.Thread(target=cameras.restaura, daemon=True).start()
+
+    def tempos_em_loop():
+        while True:
+            biblioteca.preenche_tempos()
+            time.sleep(600)       # modelos novos baixados ganham estimativa em até 10 min
+    threading.Thread(target=tempos_em_loop, daemon=True).start()
     print(f"central em http://localhost:{PORTA}", flush=True)
     ThreadingHTTPServer(("0.0.0.0", PORTA), H).serve_forever()

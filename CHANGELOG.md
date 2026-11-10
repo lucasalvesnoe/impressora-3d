@@ -2,6 +2,46 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versão em [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.0] — 2026-11-10
+
+### Adicionado
+- Pausa e retomada pelo `imprime.py`: criar o arquivo `PAUSA` na pasta faz o envio parar, recolher 2 mm de
+  filamento e subir o bico 10 mm, com o aquecimento mantido; tirar o arquivo retoma da mesma linha. Usado
+  para retirar uma peça pronta da mesa sem cancelar a outra que ainda imprimia.
+- Câmera do iPhone ligado por cabo, lida pela tela do aparelho (`scripts/iphone_cabo.swift`), com giro
+  configurável (`iphone_cabo_giro` em `cameras.json`).
+- Zoom fixo por câmera (`cams_zoom.json`): recorte da região da mesa que o bico percorre, para comparar a
+  peça com a vista 3D sem precisar seguir o bico.
+- Detecção de falha com o modelo do Obico (`scripts/obico.py`), restrita à região da mesa
+  (`obico_roi.json`), e vigia que sai ao passar do limite, ao fim da impressão ou com pouco disco
+  (`scripts/espera_ou_alerta.sh`).
+- Time-lapse das câmeras durante a impressão, com o vídeo montado pelo `ffmpeg` ao final
+  (`scripts/timelapse.sh`).
+- Retomada depois de queda do USB (`scripts/continua_so_direita.py`), extração de peças de arquivos 3MF
+  (`scripts/extrai_3mf.py`) e estimativa de tempo de cada modelo na aba Modelos (`central/biblioteca.py`).
+
+### Alterado
+- Vista 3D fiel ao fatiamento: todo filete do gcode é enviado, sem simplificação. O novo formato TP2
+  (polilinhas com coordenadas em centésimos de milímetro, comprimidas com gzip) reduziu 1,1 milhão de
+  filetes de 38 MB para 3,6 MB. A versão anterior fundia trechos curtos até 3 mm, o que tornava
+  triangulares os galhos do suporte orgânico e as curvas finas.
+- A vista 3D e o visualizador da aba Modelos passaram a desenhar apenas quando algo muda (câmera girada,
+  progresso novo, opção alterada) e deixam de desenhar com a aba escondida. Antes desenhavam 60 quadros
+  por segundo continuamente, o que deixava a página lenta. A sombra é recalculada a cada 2 s.
+- Disposição da aba Impressão: a barra de câmeras ocupa a largura inteira; abaixo dela, a vista 3D à
+  esquerda e, à direita, a câmera principal com o zoom fixo logo abaixo, ambas com a mesma altura da
+  vista 3D. O zoom é desenhado em canvas para caber em qualquer altura sem distorção. As demais câmeras
+  ligadas aparecem abaixo.
+- Câmeras com nomes legíveis ("MacBook Pro (câmera embutida)", "iPhone por Continuidade", "iPhone velho
+  pelo cabo"), configuráveis em `cameras.json` no campo `apelidos`.
+- Início do gcode protege os grampos da mesa nos quatro cantos: o bico sobe 15 mm, faz a referência de X
+  e Y, e a referência de Z no centro da mesa; o final estaciona em X110 Y200.
+
+### Corrigido
+- Câmera ligada que perdia o aparelho (cabo solto, iPhone fora de alcance) era esquecida de vez. Agora a
+  central guarda a escolha do usuário e religa a câmera sozinha, em até 10 s, quando o aparelho volta.
+- Imagem duplicada do iPhone na aba Impressão.
+
 ## [0.2.0] — 2026-11-08
 
 ### Adicionado
