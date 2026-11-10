@@ -25,6 +25,7 @@ LOG_TUNEL = os.path.join(RAIZ, "central", "tunel.log")
 ARQ_TOKEN = os.path.join(RAIZ, "central", ".token")
 TITULO = "Observatório"
 INTERVALO_S = 60
+TEMPO_LIMITE_S = 60
 
 
 def url_tunel():
@@ -63,11 +64,19 @@ tell application "Notes"
     end if
 end tell
 '''
-    r = subprocess.run(["osascript", "-"], input=script, capture_output=True, text=True)
-    if r.returncode != 0:
+    ok, erro = _osascript(script)
+    if not ok:
         # pasta padrão pode se chamar "Notas" em português
-        r = subprocess.run(["osascript", "-"], input=script.replace('folder "Notes"', 'folder "Notas"'),
-                           capture_output=True, text=True)
+        ok, erro = _osascript(script.replace('folder "Notes"', 'folder "Notas"'))
+    return ok, erro
+
+
+def _osascript(script):
+    """O app Notas às vezes não responde (sincronização do iCloud); sem limite, o vigia travava para sempre."""
+    try:
+        r = subprocess.run(["osascript", "-"], input=script, capture_output=True, text=True, timeout=TEMPO_LIMITE_S)
+    except subprocess.TimeoutExpired:
+        return False, f"Notas não respondeu em {TEMPO_LIMITE_S} s"
     return r.returncode == 0, r.stderr.strip()
 
 

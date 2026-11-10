@@ -2,6 +2,13 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versão em [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.4.1] — 2026-11-10
+
+### Corrigido
+- `link_fixo.py` travava para sempre quando o app Notas não respondia ao AppleScript (sincronização do
+  iCloud). Agora cada chamada tem limite de 60 s e o vigia tenta de novo no ciclo seguinte. Se o Notas
+  continuar sem responder (erro -10000), fechar e reabrir o app resolve.
+
 ## [0.4.0] — 2026-11-10
 
 ### Adicionado
